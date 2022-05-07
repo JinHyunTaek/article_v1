@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="py-5 text-center">
+        <h2>게시물 상세</h2>
+    </div>
+    <div>
+        <label for="nickname" th:text="|작성자|">작성자</label>
+        <input type="text" id="nickname" name="nickname" class="form-control" th:value="${article.member.nickname}" readonly>
+    </div>
+    <div>
+        <label for="title" th:text="|제목|">제목</label>
+        <input type="text" id="title" name="title" class="form-control" th:value="${article.title}" readonly>
+    </div>
+    <div>
+        <label for="body" th:text="|내용|">내용</label>
+        <input type="text" id="body" name="body" class="form-control" th:value="${article.body}" readonly>
+    </div>
+    <br>
+    <div class="row">
+        <div th:if="${session.memberId == article.member.id}" class="col-lg-2">
+            <button class="btn btn-primary float-end text-dark"
+                    th:onclick="|location.href='@{/article/update/{articleId}(articleId=${article.id})}'|">수정</button>
+        </div>
+        <div th:if="${session.memberId == article.member.id}" class="col-lg-2">
+            <button class="btn btn-primary float-end text-dark"
+                    th:onclick="|location.href='@{/article/delete/{articleId}(articleId=${article.id})}'|">삭제</button>
+        </div>
+    </div>
+    <br>
+    <p th:text="|작성일:${article.createDateTime}|"></p>
+    <div>
+        <h4>댓글</h4>
+        <hr style="border: 2px solid black;">
+        <div th:each="reply : ${replies}">
+            <p th:text="|작성자:*{reply.member.nickname}|" />
+            <p th:text="*{reply.body}" />
+            <hr>
+        </div>
+    </div>
+    <div th:if="${session.memberId != null}">
+        <form action="/article/addReply" th:object="${reply}" method="post">
+            <div>
+                <input type="hidden" class="form-control" th:name="articleId" th:value="${article.id}" />
+                <input type="text" id="replyBody" th:field="*{body}" class="form-control"
+                       th:errorclass="field-error" placeholder="댓글을 남겨보세요.">
+                <div class="field-error" th:errors="*{body}" style="font-size: 15px;"/>
+                <button class="btn btn-primary float-end" type="submit">작성</button>
+            </div>
+        </form>
+    </div>
+    <br>
+    <div class="g-lg-4">
+        <button class="btn btn-primary float-end"
+                th:onclick="|location.href='@{/}'|">목록으로</button>
+    </div>
+</div> <!-- /container -->
+</body>
+</html>

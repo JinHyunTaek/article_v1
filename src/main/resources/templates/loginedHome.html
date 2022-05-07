@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="py-5 text-center">
+        <h2>게시물 목록</h2>
+        <form th:action="@{/member/logout}" method="post">
+            <button class="btn btn-secondary"
+                    onclick="location.href='home.html'" type="submit">
+                로그아웃
+            </button>
+        </form>
+    </div>
+    <div>
+        <h4 th:text="|${member?.nickname}님 환영합니다.|"></h4>
+    </div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>조회수</th>
+        </tr> <!-- 가로줄 하나 -->
+        </thead>
+        <tbody>
+        <tr th:each="article : ${articles}">
+            <td th:text="${article.id}"></td>
+            <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.id})}"
+                   th:text="|${article.title}[${article.replies.size()}]|">title</a></td>
+            <td th:text="${article.member?.nickname}">닉네임</td>
+            <td th:text="${article.likeNumber}">0</td>
+        </tr>
+        </tbody>
+    </table>
+    <button class="btn btn-primary float-end" th:onclick="|location.href='@{/article/create}'|">
+        게시물 등록
+    </button>
+</div> <!-- /container -->
+</body>
+</html>
