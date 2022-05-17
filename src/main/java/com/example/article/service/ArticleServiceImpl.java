@@ -27,8 +27,8 @@ public class ArticleServiceImpl implements ArticleService{
     }
 
     @Override
-    public List<Article> findArticles() {
-        return articleRepository.findAll();
+    public List<Article> findArticlesByPageDesc() {
+        return articleRepository.findAllByPageDesc();
     }
 
     @Transactional
@@ -43,5 +43,18 @@ public class ArticleServiceImpl implements ArticleService{
     public void deleteArticle(Long id) {
         articleRepository.deleteArticle(id);
     }
+
+    @Transactional
+    @Override
+    public void addHitCount(Long articleId) {
+        Article article = articleRepository.findById(articleId);
+        article.addHitCount();
+    }
+
+    @Override
+    public List<Article> findArticlesByMemberIdDesc(Long memberId) {
+        return articleRepository.findAllByMemberIdDesc(memberId);
+    }
+
 
 }

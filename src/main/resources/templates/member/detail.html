@@ -16,19 +16,20 @@
 <body>
 <div class="container">
     <div class="py-5 text-center">
-        <h2>게시물 목록</h2>
+        <h2>회원 상세</h2>
     </div>
-    <div class="row g-2">
+    <div>
+        <p><h5 th:text="|회원명:${member.nickname}|">닉네임</h5></p>
+    </div>
+    <div class="row">
         <div class="col-2">
-            <button type="button" class="btn btn-secondary btn-sm"
-                    th:onclick="|location.href='@{/member/login}'|">로그인</button>
+            <a href="" th:href="|@{/member/detail/{memberId}(memberId=${member.id})}|" th:text="작성글">작성글</a>
         </div>
         <div class="col-3">
-            <button type="button" class="btn btn-secondary btn-sm"
-                    th:onclick="|location.href='@{/member/signUp}'|">회원가입</button>
+            <a href="" th:href="|@{/member/detail/{memberId}(memberId=${member.id},replies=true)}|" th:text="작성댓글">작성댓글</a>
         </div>
     </div>
-    <br>
+    <hr>
     <table class="table table-striped">
         <thead>
         <tr>
@@ -39,29 +40,26 @@
         </tr> <!-- 가로줄 하나 -->
         </thead>
         <tbody>
-        <tr th:each="article : ${articles}">
+        <tr th:if="${isGetReplies==null}" th:each="article : ${articles}">
             <td th:text="${article.id}"></td>
             <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.id})}"
                    th:text="|${article.title}[${article.replies.size()}]|">title</a></td>
             <td th:text="${article.member.nickname}"></td>
             <td th:text="${article.hit}"></td>
         </tr>
+        <tr th:if="${isGetReplies!=null}" th:each="r_article : ${r_articles}">
+            <td th:text="${r_article.id}"></td>
+            <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${r_article.id})}"
+                   th:text="|${r_article.title}[${r_article.replies.size()}]|">title</a></td>
+            <td th:text="${r_article.member.nickname}"></td>
+            <td th:text="${r_article.hit}"></td>
+        </tr>
         </tbody>
     </table>
-    <br>
-    <p>
-    <form action="/article/search">
-        <fieldset>
-            검색분류 <select name="selection">
-            <option value="titleAndBody">제목+내용</option>
-            <option value="title">제목만</option>
-            <option value="body">내용만</option>
-        </select> <!-- select 태그 안에 옵션 값 존재 -->
-            검색어 <input type="text" name="searchValue" >
-            <input type="submit" name="searchButton" value="검색">
-        </fieldset>
-    </form>
-    </p>
+    <div class="g-lg-4">
+        <button class="btn btn-primary float-end"
+                th:onclick="|location.href='@{/}'|">목록으로</button>
+    </div>
 </div> <!-- /container -->
 </body>
 </html>

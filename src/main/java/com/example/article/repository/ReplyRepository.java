@@ -1,9 +1,9 @@
 package com.example.article.repository;
 
+import com.example.article.domain.Article;
 import com.example.article.domain.Reply;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ReplyRepository {
 
@@ -17,4 +17,7 @@ public interface ReplyRepository {
 
     void deleteReply(Long id);
 
+    List<Reply> findRepliesOfArticles(List<Article> articles);
+
+    List<Reply> findAllByMemberIdDesc(Long memberId);
 }

@@ -21,8 +21,9 @@ public class ArticleRepositoryImpl implements ArticleRepository{
         return em.find(Article.class,id);
     }
 
-    public List<Article> findAll() {
-        return em.createQuery("select a from Article a join fetch a.member")
+    public List<Article> findAllByPageDesc() {
+        return em.createQuery("select a from Article a " +
+                        "join fetch a.member order by a.id desc ",Article.class)
                 .setFirstResult(0)
                 .setMaxResults(10)
                 .getResultList();
@@ -38,6 +39,15 @@ public class ArticleRepositoryImpl implements ArticleRepository{
                 .setParameter("id",id)
                 .executeUpdate();
         System.out.println("==");
+    }
+
+    @Override
+    public List<Article> findAllByMemberIdDesc(Long memberId) {
+        return em.createQuery("select a from Article a " +
+                        "join fetch a.member m " +
+                        "where m.id=:memberId order by a.id desc ")
+                .setParameter("memberId",memberId)
+                .getResultList();
     }
 
 }

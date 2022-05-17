@@ -1,19 +1,18 @@
-package com.example.article.dto;
+package com.example.article.web.form;
 
 import com.example.article.domain.Member;
+import com.example.article.domain.MemberLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Getter @Setter
 @AllArgsConstructor
-public class CreateMemberDto {
+public class CreateMemberForm {
 
     @NotEmpty
     @Size(min = 3, max = 10)
@@ -32,6 +31,7 @@ public class CreateMemberDto {
                 .password(this.password)
                 .nickname(this.nickname)
                 .joinedAt(LocalDateTime.now())
+                .memberLevel(MemberLevel.NEW)
                 .build();
     }
 }

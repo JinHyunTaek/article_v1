@@ -2,8 +2,8 @@ package com.example.article;
 
 import com.example.article.domain.Article;
 import com.example.article.domain.Member;
-import com.example.article.dto.ArticleDto;
-import com.example.article.dto.CreateMemberDto;
+import com.example.article.web.form.CreateArticleForm;
+import com.example.article.web.form.CreateMemberForm;
 import com.example.article.service.ArticleServiceImpl;
 import com.example.article.service.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +20,11 @@ public class TestDataInit {
 
     @PostConstruct
     public void init(){
-        CreateMemberDto memberDto = new CreateMemberDto("test", "test!", "테스터");
+        CreateMemberForm memberDto = new CreateMemberForm("test", "test!", "테스터");
         Member member = memberDto.toEntity();
         memberService.saveMember(member);
 
-        ArticleDto articleDto = new ArticleDto("title1", member, "hello");
+        CreateArticleForm articleDto = new CreateArticleForm("title1", member, "hello");
         Article article = articleDto.toEntity();
         articleService.save(article);
         System.out.println("article = " + article);

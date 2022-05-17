@@ -19,8 +19,9 @@
         <h2>게시물 상세</h2>
     </div>
     <div>
-        <label for="nickname" th:text="|작성자|">작성자</label>
-        <input type="text" id="nickname" name="nickname" class="form-control" th:value="${article.member.nickname}" readonly>
+        <p>작성자: <a href="" th:href="@{/member/detail/{memberId}(memberId=${article.member.id})}"
+              th:text="|${article.member.nickname}|">작성자</a></p>
+        <input type="hidden" id="nickname" name="nickname" class="form-control" th:value="${article.member.nickname}" readonly>
     </div>
     <div>
         <label for="title" th:text="|제목|">제목</label>

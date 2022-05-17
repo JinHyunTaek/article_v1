@@ -28,19 +28,18 @@
         <div>
             <input type="hidden" id="id" th:field="*{id}" class="form-control"
                    th:errorclass="field-error">
-            <div class="field-error" th:errors="*{id}"></div>
         </div>
         <div>
             <label for="title">제목</label>
             <input type="text" id="title" th:field="*{title}" class="form-control"
                    th:errorclass="field-error">
-            <div class="field-error" th:errors="*{title}"></div>
+            <div class="field-error" th:errors="*{title}" style="font-size: 15px;"></div>
         </div>
         <div>
             <label for="body">내용</label>
             <input type="text" id="body" th:field="*{body}" class="form-control"
                    th:errorclass="field-error">
-            <div class="field-error" th:errors="*{body}"></div>
+            <div class="field-error" th:errors="*{body}" style="font-size: 15px;"></div>
         </div>
         <hr class="my-4">
         <div class="row">

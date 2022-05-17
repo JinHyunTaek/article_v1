@@ -1,4 +1,4 @@
-package com.example.article.dto;
+package com.example.article.web.form;
 
 import com.example.article.domain.Article;
 import com.example.article.domain.Member;
@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ReplyDto {
+public class ReplyForm {
 
     private Member member;
 

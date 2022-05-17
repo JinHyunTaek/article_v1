@@ -18,4 +18,8 @@ public interface ReplyService {
     void deleteReply(Long id);
 
     List<Reply> findByArticleId(Long articleId);
+
+    List<Reply> findRepliesOfArticles(List<Article> articles);
+
+    List<Reply> findRepliesByMemberIdDesc(Long memberId);
 }

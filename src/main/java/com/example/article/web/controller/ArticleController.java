@@ -1,11 +1,11 @@
-package com.example.article.controller;
+package com.example.article.web.controller;
 
 import com.example.article.domain.Article;
 import com.example.article.domain.Member;
 import com.example.article.domain.Reply;
-import com.example.article.dto.ArticleUpdateDto;
-import com.example.article.dto.ArticleDto;
-import com.example.article.dto.ReplyDto;
+import com.example.article.web.form.ArticleUpdateForm;
+import com.example.article.web.form.CreateArticleForm;
+import com.example.article.web.form.ReplyForm;
 import com.example.article.service.ArticleServiceImpl;
 import com.example.article.service.MemberServiceImpl;
 import com.example.article.service.ReplyServiceImpl;
@@ -41,7 +41,7 @@ public class ArticleController {
     }
 
     @PostMapping("/create")
-    public String create(@Validated @ModelAttribute("article") ArticleDto articleDto, BindingResult bindingResult,
+    public String create(@Validated @ModelAttribute("article") CreateArticleForm createArticleForm, BindingResult bindingResult,
                          @SessionAttribute(name = "memberId") Long memberId, Model model){
 
         Member member = memberService.findById(memberId);
@@ -52,18 +52,19 @@ public class ArticleController {
             return "article/addForm";
         }
 
-        articleDto.setMember(member);
+        createArticleForm.setMember(member);
 
-        Article article = articleDto.toEntity();
+        Article article = createArticleForm.toEntity();
         articleService.save(article);
 
         return "redirect:/";
     }
 
     @PostMapping("/addReply")
-    public String createReply(@Validated @ModelAttribute("reply") ReplyDto replyDto, BindingResult bindingResult,
+    public String createReply(@Validated @ModelAttribute("reply") ReplyForm replyForm, BindingResult bindingResult,
                               Model model, @SessionAttribute(name = "memberId") Long memberId,
-                              HttpServletRequest request, RedirectAttributes redirectAttributes){
+                              HttpServletRequest request,
+                              RedirectAttributes redirectAttributes){
 
         Long articleId = Long.valueOf(request.getParameter("articleId"));
 
@@ -78,9 +79,9 @@ public class ArticleController {
             return "article/detail";
         }
 
-        replyDto.setArticle(article);
-        replyDto.setMember(member);
-        Reply reply = replyDto.toEntity();
+        replyForm.setArticle(article);
+        replyForm.setMember(member);
+        Reply reply = replyForm.toEntity();
         replyService.save(reply);
 
         redirectAttributes.addAttribute("articleId",articleId);
@@ -89,8 +90,15 @@ public class ArticleController {
 
     @GetMapping("/detail/{articleId}")
     public String articleDetail(@PathVariable Long articleId, Model model,
-                                @ModelAttribute("reply") Reply reply){
+                                @ModelAttribute("reply") Reply reply,
+                                @SessionAttribute(name = "memberId", required = false) Long memberId){
+
+        if(memberId!=null) {
+            articleService.addHitCount(articleId);
+        }
+
         Article article = articleService.findById(articleId);
+
         model.addAttribute("article",article);
 
         List<Reply> replies = replyService.findByArticleId(articleId);
@@ -99,8 +107,7 @@ public class ArticleController {
     }
 
     @GetMapping("/update/{articleId}")
-    public String update(@PathVariable Long articleId,Model model,
-                         @SessionAttribute("memberId") Long memberId){
+    public String update(@PathVariable Long articleId,Model model){
         Article article = articleService.findById(articleId);
         model.addAttribute("article",article);
         return "article/updateForm";
@@ -108,14 +115,26 @@ public class ArticleController {
 
     @PostMapping("/update/{articleId}")
     public String update(@PathVariable Long articleId,
-                         @Valid @ModelAttribute("article") ArticleUpdateDto updateDto, BindingResult bindingResult){
+                         @Valid @ModelAttribute("article") ArticleUpdateForm updateForm, BindingResult bindingResult,
+                         Model model){
+
+        updateForm.setMember(articleService.findById(articleId).getMember());
+
         if(bindingResult.hasErrors()){
+            log.info("errors={}",bindingResult);
             return "article/updateForm";
         }
 
-        articleService.updateArticle(articleId,updateDto.getTitle(),updateDto.getBody());
+        articleService.updateArticle(articleId,updateForm.getTitle(),updateForm.getBody());
         return "redirect:/article/detail/{articleId}";
+    }
 
+    @GetMapping("/search")
+    public String getSearchValueList(
+            @RequestParam("selection") String selection,
+            @RequestParam("searchValue") String searchValue
+    ){
+        return "redirect:/";
     }
 
     @GetMapping("/delete/{articleId}")

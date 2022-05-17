@@ -10,8 +10,10 @@ public interface ArticleRepository {
 
     Article findById(Long id);
 
-    List<Article> findAll();
+    List<Article> findAllByPageDesc();
 
     void deleteArticle(Long id);
+
+    List<Article> findAllByMemberIdDesc(Long memberId);
 
 }

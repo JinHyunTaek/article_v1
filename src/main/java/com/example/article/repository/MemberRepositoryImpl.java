@@ -25,6 +25,12 @@ public class MemberRepositoryImpl implements MemberRepository{
     }
 
     @Override
+    public List<Member> findAll() {
+        return em.createQuery("select m from Member m",Member.class)
+                .getResultList();
+    }
+
+    @Override
     public Optional<Member> findByLoginId(String loginId) {
         return findAll().stream()
                 .filter(member -> member.getLoginId().equals(loginId))
@@ -32,13 +38,13 @@ public class MemberRepositoryImpl implements MemberRepository{
     }
 
     @Override
-    public List<Member> findAll() {
-        return em.createQuery("select m from Member m",Member.class)
-                .getResultList();
+    public Optional<Member> findByNickname(String nickname) {
+        return findAll().stream()
+                .filter(member -> member.getNickname().equals(nickname))
+                .findFirst();
     }
 
-    private void validateDuplicateField(String loginId, String nickname){
-
+    private void validateDuplicateField(){
     }
 
 }

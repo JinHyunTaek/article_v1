@@ -28,7 +28,7 @@
                     <label for="title">상품명</label>
                     <input type="text" id="title" th:field="*{title}"
                            th:errorclass="field-error" class="form-control" placeholder="제목을 입력하세요.">
-                    <div class="field-error" th:errors="*{title}">
+                    <div class="field-error" th:errors="*{title}" style="font-size: 15px;">
                         제목 오류
                     </div>
                 </div>
@@ -37,7 +37,7 @@
                     <input type="text" id="body" th:field="*{body}"
                            class="form-control" placeholder="내용을 입력하세요."
                            th:errorclass="field-error">
-                    <div class="field-error" th:errors="*{body}" />
+                    <div class="field-error" th:errors="*{body}" style="font-size: 15px;"/>
                 </div>
                 <hr class="my-4">
                 <div class="row">

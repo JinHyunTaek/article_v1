@@ -10,9 +10,13 @@ public interface ArticleService {
 
     Article findById(Long id);
 
-    List<Article> findArticles();
+    List<Article> findArticlesByPageDesc();
 
     void updateArticle(Long articleId, String title, String body);
 
     void deleteArticle(Long id);
+
+    void addHitCount(Long articleId);
+
+    List<Article> findArticlesByMemberIdDesc(Long memberId);
 }

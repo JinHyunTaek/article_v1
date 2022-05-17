@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Getter
@@ -17,7 +18,7 @@ import static javax.persistence.FetchType.LAZY;
 @Builder
 public class Reply {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = IDENTITY)
     @Column(name = "reply_id")
     private Long id;
 
