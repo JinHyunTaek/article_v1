@@ -28,7 +28,6 @@ import static java.util.Optional.ofNullable;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    //
     @ExceptionHandler({MemberException.class})
     public ResponseEntity<Result<MemberErrorResponse>> handleMemberException(MemberException e, HttpServletRequest request){
         log.info("error code: {}, message: {}, url: {}",
