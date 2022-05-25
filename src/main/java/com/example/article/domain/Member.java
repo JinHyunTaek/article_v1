@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,6 +15,7 @@ import java.util.List;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name="MEMBERS")
 @Getter
 @NoArgsConstructor
@@ -31,15 +34,22 @@ public class Member {
 
     private String nickname;
 
+    @Enumerated(EnumType.STRING)
     private MemberLevel memberLevel;
 
     @OneToMany(mappedBy = "member")
     private List<Article> articles = new ArrayList<>();
 
+    @Column(nullable = false, insertable = false, updatable = false,
+            columnDefinition = "datetime default CURRENT_TIMESTAMP")
+    @CreatedDate
     private LocalDateTime joinedAt;
 
     @OneToMany(mappedBy = "member")
     private List<Reply> replies = new ArrayList<>();
+
+    @Embedded
+    private Address address;
 
     public void update(String loginId,String password,String nickname){
         this.loginId = loginId;

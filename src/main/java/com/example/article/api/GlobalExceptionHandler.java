@@ -1,11 +1,14 @@
 package com.example.article.api;
 
+import com.example.article.api.controller.ArticleApiController;
+import com.example.article.api.controller.ArticleApiController.Result;
 import com.example.article.api.error.errorresponse.BasicErrorResponse;
 import com.example.article.api.error.errorresponse.MemberErrorResponse;
 import com.example.article.api.error.member.MemberException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,7 +30,7 @@ public class GlobalExceptionHandler {
 
     //
     @ExceptionHandler({MemberException.class})
-    public ResponseEntity<MemberErrorResponse> handleMemberException(MemberException e, HttpServletRequest request){
+    public ResponseEntity<Result<MemberErrorResponse>> handleMemberException(MemberException e, HttpServletRequest request){
         log.info("error code: {}, message: {}, url: {}",
                 e.getErrorCode(),e.getErrorMessage(),request.getRequestURI());
         MemberErrorResponse response = MemberErrorResponse.builder()
@@ -35,12 +38,14 @@ public class GlobalExceptionHandler {
                 .memberErrorField(ofNullable(e.getErrorField()))
                 .errorMessage(e.getErrorMessage())
                 .build();
-        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new Result<>(response));
     }
 
     //@Valid 예외
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<MemberErrorResponse> handleValidationException(MethodArgumentNotValidException e, HttpServletRequest request){
+    public ResponseEntity<Result<MemberErrorResponse>> handleValidationException(MethodArgumentNotValidException e, HttpServletRequest request){
 
         List<FieldError> findErrors = e.getBindingResult().getFieldErrors();
 
@@ -50,32 +55,52 @@ public class GlobalExceptionHandler {
             errorFields.add(fieldError.getField());
         }
 
-        log.info("error field: {}, message: {} url: {}",
-                e,e.getMessage(),request.getRequestURI());
+        log.info("error fields: {}, message: {} url: {}",
+                e.getBindingResult().getFieldErrors(),e.getMessage(),request.getRequestURI());
         MemberErrorResponse response = MemberErrorResponse.builder()
                 .memberErrorCode(SIZE_NOT_MATCHED.toString())
                 .memberErrorFields(of((errorFields)))
                 .errorMessage(SIZE_NOT_MATCHED.getErrorMessage())
                 .build();
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new Result<>(response));
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<BasicErrorResponse> noHandlerFoundHandle(NoHandlerFoundException e,HttpServletRequest request) {
+    public ResponseEntity<Result<BasicErrorResponse>> noHandlerFoundHandle(NoHandlerFoundException e,HttpServletRequest request) {
         log.error("error message: {}, url: {}",e.getMessage(),request.getRequestURI());
         BasicErrorResponse response = BasicErrorResponse.builder()
                 .url(request.getRequestURI())
                 .message(e.getMessage())
                 .build();
-        return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new Result<>(response));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Result<BasicErrorResponse>> noReadableMessageHandle
+            (HttpMessageNotReadableException e,HttpServletRequest request){
+        log.error("error message: {}, url:{}",e.getMessage(),request.getRequestURI());
+        BasicErrorResponse response = BasicErrorResponse.builder()
+                .url(request.getRequestURI())
+                .message(e.getMessage())
+                .build();
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new Result<>(response));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<MemberErrorResponse> handleServerException(Exception e, HttpServletRequest request){
+    public ResponseEntity<Result<BasicErrorResponse>>  handleServerException(Exception e, HttpServletRequest request){
         log.error("error message: {}, url: {}",e.getMessage(),request.getRequestURI());
-        MemberErrorResponse response = MemberErrorResponse.builder()
-                .errorMessage(INTERNAL_SERVER_ERROR.getErrorMessage() + " [부가 오류 메세지:"+e.getMessage()+"]")
+        BasicErrorResponse response = BasicErrorResponse.builder()
+                .url(request.getRequestURI())
+                .message(e.getMessage())
                 .build();
-        return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new Result<>(response));
     }
 }

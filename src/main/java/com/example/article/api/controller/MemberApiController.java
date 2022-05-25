@@ -2,9 +2,9 @@ package com.example.article.api.controller;
 
 import com.example.article.api.dto.member.CreateMemberDto.CreateMemberRequest;
 import com.example.article.api.dto.member.CreateMemberDto.CreateMemberResponse;
+import com.example.article.api.dto.member.GetMemberDto;
 import com.example.article.api.dto.member.LoginMemberDto.LoginMemberRequest;
 import com.example.article.api.dto.member.LoginMemberDto.LoginMemberResponse;
-import com.example.article.api.dto.member.GetMemberDto;
 import com.example.article.api.dto.member.UpdateMemberDto.UpdateMemberRequest;
 import com.example.article.api.dto.member.UpdateMemberDto.UpdateMemberResponse;
 import com.example.article.api.error.member.MemberErrorCode;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,15 +45,25 @@ public class MemberApiController {
         HttpSession session = servletRequest.getSession();
         session.setAttribute("loginId",loginMember.getId());
 
-        LoginMemberResponse response = LoginMemberResponse.fromEntity(loginMember);
+        LoginMemberResponse response = LoginMemberResponse.toDto(loginMember);
         return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logoutV3(HttpServletRequest request){
+        HttpSession session = request.getSession(false); //가져오되, 생성은 x
+        if(session!=null){ //세션 있으면
+            session.invalidate();
+            return new ResponseEntity<>("logout success",HttpStatus.OK);
+        }
+        return new ResponseEntity<>("no session",HttpStatus.UNAUTHORIZED);
     }
 
     @GetMapping("/members")
     public List<GetMemberDto> getMembers(){
         List<Member> members = memberService.findAll();
         List<GetMemberDto> memberDtoList =
-                members.stream().map(member -> GetMemberDto.fromEntityWithAr(member)).collect(Collectors.toList());
+                members.stream().map(member -> GetMemberDto.toDtoWithAr(member)).collect(Collectors.toList());
         return memberDtoList;
     }
 
@@ -66,7 +75,6 @@ public class MemberApiController {
                 .loginId(request.getLoginId())
                 .password(request.getPassword())
                 .nickname(request.getNickname())
-                .joinedAt(LocalDateTime.now())
                 .memberLevel(MemberLevel.NEW)
                 .build();
 
@@ -75,15 +83,15 @@ public class MemberApiController {
         }
 
         memberService.saveMember(member);
-        CreateMemberResponse response = CreateMemberResponse.fromEntity(member);
+        CreateMemberResponse response = CreateMemberResponse.toDto(member);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/detail/{memberId}")
     public ResponseEntity<GetMemberDto> getDetail(@PathVariable Long memberId){
         Member member = memberService.findById(memberId);
-        GetMemberDto memberDto = GetMemberDto.fromEntityWithArAndRep(member);
+        GetMemberDto memberDto = GetMemberDto.toDtoWithArAndRep(member);
 
         return new ResponseEntity<>(memberDto,HttpStatus.OK);
     }
@@ -95,7 +103,7 @@ public class MemberApiController {
             ){
         Member member = memberService.findById(memberId);
         memberService.updateMember(memberId, request.getLoginId(), request.getPassword(), request.getNickname());
-        UpdateMemberResponse response = UpdateMemberResponse.fromEntity(member);
+        UpdateMemberResponse response = UpdateMemberResponse.toDto(member);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }

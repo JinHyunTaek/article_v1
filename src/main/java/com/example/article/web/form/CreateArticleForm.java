@@ -27,12 +27,10 @@ public class CreateArticleForm {
     public Article toEntity(){
         return Article.builder()
                 .title(this.title)
-                .likeNumber(0)
-                .hit(0)
                 .member(this.member)
-                .createDateTime(LocalDateTime.now())
-                .modifiedDateTime(LocalDateTime.now())
                 .body(this.body)
+                .hit(0)
+                .likeNumber(0)
                 .build();
     }
 }

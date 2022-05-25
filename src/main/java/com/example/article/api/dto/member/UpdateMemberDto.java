@@ -43,7 +43,7 @@ public class UpdateMemberDto {
         private MemberLevel memberLevel;
         private String loginId;
 
-        public static UpdateMemberResponse fromEntity(Member member){
+        public static UpdateMemberResponse toDto(Member member){
             return UpdateMemberResponse.builder()
                     .nickname(member.getNickname())
                     .memberLevel(member.getMemberLevel())

@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
 
 @Getter @Setter
 @AllArgsConstructor
@@ -30,7 +29,6 @@ public class CreateMemberForm {
                 .loginId(this.loginId)
                 .password(this.password)
                 .nickname(this.nickname)
-                .joinedAt(LocalDateTime.now())
                 .memberLevel(MemberLevel.NEW)
                 .build();
     }

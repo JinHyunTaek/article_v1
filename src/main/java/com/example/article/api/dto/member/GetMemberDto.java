@@ -30,7 +30,7 @@ public class GetMemberDto {
     private LocalDateTime joinedAt;
 
 
-    public static GetMemberDto fromEntityWithAr(Member member){
+    public static GetMemberDto toDtoWithAr(Member member){
         return GetMemberDto.builder()
                 .loginId(member.getLoginId())
                 .nickname(member.getNickname())
@@ -43,7 +43,7 @@ public class GetMemberDto {
     }
 
     //한 명의 멤버만을 조회할 때는 in 쿼리 나가지 않음. (where articles_member_id = "", where replies_member_id = "")
-    public static GetMemberDto fromEntityWithArAndRep(Member member){
+    public static GetMemberDto toDtoWithArAndRep(Member member){
         return GetMemberDto.builder()
                 .loginId(member.getLoginId())
                 .nickname(member.getNickname())
@@ -78,7 +78,7 @@ public class GetMemberDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    static class SimpleReplyDto{
+    private static class SimpleReplyDto{
         private Long replyId;
         private String body;
 

@@ -1,6 +1,10 @@
 package com.example.article.domain;
 
 import lombok.*;
+import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,16 +32,22 @@ public class Article {
     @Column(columnDefinition = "TEXT")
     private String body;
 
-    @Column(name = "createdAt")
+    @Column(nullable = false, insertable = false, updatable = false,
+            columnDefinition = "datetime default CURRENT_TIMESTAMP")
+    @CreatedDate
     private LocalDateTime createDateTime;
 
-    @Column(name = "modifiedAt")
+    @Column(nullable = false, insertable = false, updatable = false,
+            columnDefinition = "datetime default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP")
+    @LastModifiedDate
     private LocalDateTime modifiedDateTime;
 
-    @Column(columnDefinition = "integer default 0")
+    @Setter
+    @Column(nullable = false, columnDefinition = "integer default 0")
     private Integer likeNumber; //like 예약어래 야발...
 
-    @Column(columnDefinition = "integer default 0")
+    @Setter
+    @Column(nullable = false, columnDefinition = "integer default 0")
     private Integer hit;
 
     @ManyToOne(fetch = LAZY)

@@ -36,7 +36,7 @@ public class LoginMemberDto {
         private String nickname;
         private MemberLevel memberLevel;
 
-        public static LoginMemberDto.LoginMemberResponse fromEntity(Member member){
+        public static LoginMemberDto.LoginMemberResponse toDto(Member member){
             return LoginMemberResponse.builder()
                     .nickname(member.getNickname())
                     .memberLevel(member.getMemberLevel())

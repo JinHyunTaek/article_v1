@@ -26,6 +26,7 @@ public class CreateMemberDto {
         @Size(min = 2,max = 12)
         private String password;
 
+        @NotEmpty
         @Size(min = 2,max = 10)
         private String nickname;
 
@@ -41,7 +42,7 @@ public class CreateMemberDto {
         private LocalDateTime joinedAt;
         private MemberLevel memberLevel;
 
-       public static CreateMemberResponse fromEntity(Member member){
+       public static CreateMemberResponse toDto(Member member){
            return CreateMemberResponse.builder()
                    .nickname(member.getNickname())
                    .joinedAt(member.getJoinedAt())
