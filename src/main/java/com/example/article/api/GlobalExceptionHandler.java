@@ -1,7 +1,5 @@
 package com.example.article.api;
 
-import com.example.article.api.controller.ArticleApiController;
-import com.example.article.api.controller.ArticleApiController.Result;
 import com.example.article.api.error.errorresponse.BasicErrorResponse;
 import com.example.article.api.error.errorresponse.MemberErrorResponse;
 import com.example.article.api.error.member.MemberException;
@@ -19,18 +17,16 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.article.api.error.member.MemberErrorCode.INTERNAL_SERVER_ERROR;
 import static com.example.article.api.error.member.MemberErrorCode.SIZE_NOT_MATCHED;
-import static java.util.Optional.*;
+import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
-    //
     @ExceptionHandler({MemberException.class})
-    public ResponseEntity<Result<MemberErrorResponse>> handleMemberException(MemberException e, HttpServletRequest request){
+    public ResponseEntity<ApiResult<MemberErrorResponse>> handleMemberException(MemberException e, HttpServletRequest request){
         log.info("error code: {}, message: {}, url: {}",
                 e.getErrorCode(),e.getErrorMessage(),request.getRequestURI());
         MemberErrorResponse response = MemberErrorResponse.builder()
@@ -40,12 +36,12 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(new Result<>(response));
+                .body(new ApiResult<>(response));
     }
 
     //@Valid 예외
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Result<MemberErrorResponse>> handleValidationException(MethodArgumentNotValidException e, HttpServletRequest request){
+    public ResponseEntity<ApiResult<MemberErrorResponse>> handleValidationException(MethodArgumentNotValidException e, HttpServletRequest request){
 
         List<FieldError> findErrors = e.getBindingResult().getFieldErrors();
 
@@ -64,11 +60,11 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(new Result<>(response));
+                .body(new ApiResult<>(response));
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<Result<BasicErrorResponse>> noHandlerFoundHandle(NoHandlerFoundException e,HttpServletRequest request) {
+    public ResponseEntity<ApiResult<BasicErrorResponse>> noHandlerFoundHandle(NoHandlerFoundException e,HttpServletRequest request) {
         log.error("error message: {}, url: {}",e.getMessage(),request.getRequestURI());
         BasicErrorResponse response = BasicErrorResponse.builder()
                 .url(request.getRequestURI())
@@ -76,11 +72,11 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(new Result<>(response));
+                .body(new ApiResult<>(response));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Result<BasicErrorResponse>> noReadableMessageHandle
+    public ResponseEntity<ApiResult<BasicErrorResponse>> noReadableMessageHandle
             (HttpMessageNotReadableException e,HttpServletRequest request){
         log.error("error message: {}, url:{}",e.getMessage(),request.getRequestURI());
         BasicErrorResponse response = BasicErrorResponse.builder()
@@ -89,11 +85,11 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(new Result<>(response));
+                .body(new ApiResult<>(response));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Result<BasicErrorResponse>>  handleServerException(Exception e, HttpServletRequest request){
+    public ResponseEntity<ApiResult<BasicErrorResponse>>  handleServerException(Exception e, HttpServletRequest request){
         log.error("error message: {}, url: {}",e.getMessage(),request.getRequestURI());
         BasicErrorResponse response = BasicErrorResponse.builder()
                 .url(request.getRequestURI())
@@ -101,6 +97,6 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(new Result<>(response));
+                .body(new ApiResult<>(response));
     }
 }

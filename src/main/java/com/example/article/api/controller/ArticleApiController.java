@@ -1,5 +1,6 @@
 package com.example.article.api.controller;
 
+import com.example.article.api.ApiResult;
 import com.example.article.api.dto.article.CreateArticleDto.CreateArticleRequest;
 import com.example.article.api.dto.article.CreateArticleDto.CreateArticleResponse;
 import com.example.article.api.dto.article.GetArticleDto;
@@ -11,13 +12,9 @@ import com.example.article.domain.Article;
 import com.example.article.domain.Member;
 import com.example.article.service.ArticleServiceImpl;
 import com.example.article.service.MemberServiceImpl;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -33,16 +30,16 @@ public class ArticleApiController {
     private final MemberServiceImpl memberService;
 
     @GetMapping("/articles")
-    public ResponseEntity<Result<List<GetArticleDto>>> getArticles(){
+    public ResponseEntity<ApiResult<List<GetArticleDto>>> getArticles(){
         List<Article> articles = articleService.findArticlesByPageDesc();
         List<GetArticleDto> articleDtos = articles.stream()
                 .map(article -> GetArticleDto.getArticleDto(article))
                 .collect(Collectors.toList());
-        return ResponseEntity.ok().body(new Result<>(articleDtos));
+        return ResponseEntity.ok().body(new ApiResult<>(articleDtos));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Result<CreateArticleResponse>> createArticle(
+    public ResponseEntity<ApiResult<CreateArticleResponse>> createArticle(
             @RequestBody @Valid CreateArticleRequest request
     ){
 
@@ -62,31 +59,26 @@ public class ArticleApiController {
         CreateArticleResponse response = CreateArticleResponse.toDto(article);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new Result<>(response));
+                .body(new ApiResult<>(response));
     }
 
 
     @GetMapping("/detail/{articleId}")
-    public ResponseEntity<Result<GetArticleDto>> detail(@PathVariable Long articleId){
+    public ResponseEntity<ApiResult<GetArticleDto>> detail(@PathVariable Long articleId){
         Article article = articleService.findById(articleId);
         GetArticleDto articleDto = GetArticleDto.getArticleDto(article);
-        return ResponseEntity.ok().body(new Result<>(articleDto));
+        return ResponseEntity.ok().body(new ApiResult<>(articleDto));
     }
 
     @PostMapping("/update/{articleId}")
-    public ResponseEntity<Result<UpdateArticleResponse>> update(
+    public ResponseEntity<ApiResult<UpdateArticleResponse>> update(
             @PathVariable Long articleId,
             @Valid @RequestBody UpdateArticleRequest request){
         Article article = articleService.findById(articleId);
         articleService.updateArticle(articleId,request.getTitle(), request.getBody());
 
         UpdateArticleResponse updateResponse = UpdateArticleResponse.toDto(article);
-        return ResponseEntity.ok().body(new Result<>(updateResponse));
+        return ResponseEntity.ok().body(new ApiResult<>(updateResponse));
     }
 
-    @Data
-    @AllArgsConstructor
-    public static class Result<T>{
-        private T data;
-    }
 }

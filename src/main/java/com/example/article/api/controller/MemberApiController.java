@@ -1,5 +1,6 @@
 package com.example.article.api.controller;
 
+import com.example.article.api.ApiResult;
 import com.example.article.api.dto.member.CreateMemberDto.CreateMemberRequest;
 import com.example.article.api.dto.member.CreateMemberDto.CreateMemberResponse;
 import com.example.article.api.dto.member.GetMemberDto;
@@ -23,6 +24,8 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpStatus.CREATED;
 
 @RequestMapping("/api/member")
 @RestController
@@ -68,7 +71,7 @@ public class MemberApiController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CreateMemberResponse> create(
+    public ResponseEntity<ApiResult<CreateMemberResponse>> create(
             @RequestBody @Valid CreateMemberRequest request
     ){
         Member member = Member.builder()
@@ -83,9 +86,11 @@ public class MemberApiController {
         }
 
         memberService.saveMember(member);
-        CreateMemberResponse response = CreateMemberResponse.toDto(member);
+        ApiResult<CreateMemberResponse> response = CreateMemberResponse.toDto(member);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return ResponseEntity
+                .status(CREATED)
+                .body(response);
     }
 
     @GetMapping("/detail/{memberId}")
