@@ -1,5 +1,6 @@
 package com.example.article.api.dto.member;
 
+import com.example.article.api.ApiResult;
 import com.example.article.domain.Member;
 import com.example.article.domain.MemberLevel;
 import lombok.*;
@@ -42,12 +43,12 @@ public class CreateMemberDto {
         private LocalDateTime joinedAt;
         private MemberLevel memberLevel;
 
-       public static CreateMemberResponse toDto(Member member){
-           return CreateMemberResponse.builder()
+       public static ApiResult<CreateMemberResponse> toDto(Member member){
+           return new ApiResult<>(CreateMemberResponse.builder()
                    .nickname(member.getNickname())
                    .joinedAt(member.getJoinedAt())
                    .memberLevel(member.getMemberLevel())
-                   .build();
+                   .build());
        }
     }
 }
