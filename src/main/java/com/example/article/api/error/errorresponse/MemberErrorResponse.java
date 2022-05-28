@@ -13,8 +13,11 @@ import java.util.Optional;
 @Builder
 public class MemberErrorResponse {
 
-    private Optional<List<String>> memberErrorFields;
-    private Optional<String> memberErrorField;
+    private List<String> memberErrorFields;
     private String memberErrorCode;
     private String errorMessage;
+
+    public void addErrorField(String errorField){
+        memberErrorFields.add(errorField);
+    }
 }

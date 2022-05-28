@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.article.api.error.member.MemberErrorCode.SIZE_NOT_MATCHED;
-import static java.util.Optional.of;
-import static java.util.Optional.ofNullable;
 
 @RestControllerAdvice
 @Slf4j
@@ -31,11 +29,11 @@ public class GlobalExceptionHandler {
                 e.getErrorCode(),e.getErrorMessage(),request.getRequestURI());
         MemberErrorResponse response = MemberErrorResponse.builder()
                 .memberErrorCode(e.getErrorCode().toString())
-                .memberErrorField(ofNullable(e.getErrorField()))
+                .memberErrorFields(List.of(e.getErrorField()))
                 .errorMessage(e.getErrorMessage())
                 .build();
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(HttpStatus.BAD_REQUEST)
                 .body(new ApiResult<>(response));
     }
 
@@ -55,7 +53,7 @@ public class GlobalExceptionHandler {
                 e.getBindingResult().getFieldErrors(),e.getMessage(),request.getRequestURI());
         MemberErrorResponse response = MemberErrorResponse.builder()
                 .memberErrorCode(SIZE_NOT_MATCHED.toString())
-                .memberErrorFields(of((errorFields)))
+                .memberErrorFields((errorFields))
                 .errorMessage(SIZE_NOT_MATCHED.getErrorMessage())
                 .build();
         return ResponseEntity
