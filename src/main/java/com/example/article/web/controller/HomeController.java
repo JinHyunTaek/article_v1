@@ -31,10 +31,9 @@ import static java.util.stream.Collectors.*;
 @RequiredArgsConstructor
 public class HomeController {
 
-    private final ArticleService articleService;
+//    private final ArticleService articleService;
     private final ArticleRepository articleRepository;
     private final MemberService memberService;
-    private final ReplyService replyService;
 
     @GetMapping("/")
     public String home(@SessionAttribute(name = "memberId", required = false) Long memberId,
