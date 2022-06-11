@@ -3,13 +3,15 @@ package com.example.article.web.controller;
 import com.example.article.domain.Article;
 import com.example.article.domain.Member;
 import com.example.article.domain.Reply;
+import com.example.article.repository.ArticleRepository;
+import com.example.article.service.ArticleService;
 import com.example.article.web.form.CreateMemberForm;
 import com.example.article.web.form.LoginForm;
-import com.example.article.service.ArticleServiceImpl;
 import com.example.article.service.MemberServiceImpl;
 import com.example.article.service.ReplyServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +25,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.springframework.data.domain.Sort.Direction.DESC;
+
 @Controller
 @RequiredArgsConstructor
 @Slf4j
@@ -30,7 +34,8 @@ import java.util.stream.Collectors;
 public class MemberController {
 
     private final MemberServiceImpl memberService;
-    private final ArticleServiceImpl articleService;
+    private final ArticleRepository articleRepository;
+    private final ArticleService articleService;
     private final ReplyServiceImpl replyService;
 
     @GetMapping("/signUp")
@@ -106,7 +111,8 @@ public class MemberController {
 
         Member member = memberService.findById(memberId);
 
-        List<Article> articles = articleService.findArticlesByMemberIdDesc(member.getId());
+        List<Article> articles = articleRepository.findByMemberIdOrderByIdDesc(memberId);
+//        List<Article> articles = articleService.findArticlesByMemberIdDesc(member.getId());
         List<Reply> replies = replyService.findRepliesByMemberIdDesc(member.getId());
 
         List<Article> r_articles = replies.stream().map(reply -> reply.getArticle()).collect(Collectors.toList());

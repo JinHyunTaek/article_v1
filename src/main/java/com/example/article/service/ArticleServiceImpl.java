@@ -56,5 +56,4 @@ public class ArticleServiceImpl implements ArticleService{
         return articleJpaRepository.findAllByMemberIdDesc(memberId);
     }
 
-
 }
