@@ -1,9 +1,8 @@
 package com.example.article.api.dto.member;
 
-import com.example.article.domain.Article;
-import com.example.article.domain.Member;
-import com.example.article.domain.MemberLevel;
-import com.example.article.domain.Reply;
+import com.example.article.api.ApiResult;
+import com.example.article.domain.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -27,11 +26,12 @@ public class GetMemberDto {
 
     private List<SimpleReplyDto> replies;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime joinedAt;
 
-
-    public static GetMemberDto toDtoWithAr(Member member){
-        return GetMemberDto.builder()
+    //멤버 리스트 조회용
+    public static ApiResult<GetMemberDto> toDtoWithAr(Member member){
+        return new ApiResult<>(GetMemberDto.builder()
                 .loginId(member.getLoginId())
                 .nickname(member.getNickname())
                 .memberLevel(member.getMemberLevel())
@@ -39,12 +39,12 @@ public class GetMemberDto {
                 .articles(member.getArticles().stream()
                         .map(article -> new SimpleArticleDto(article))
                         .collect(Collectors.toList()))
-                .build();
+                .build());
     }
 
-    //한 명의 멤버만을 조회할 때는 in 쿼리 나가지 않음. (where articles_member_id = "", where replies_member_id = "")
-    public static GetMemberDto toDtoWithArAndRep(Member member){
-        return GetMemberDto.builder()
+    //상세보기용, 한 명의 멤버만을 조회할 때는 in 쿼리 나가지 않음. (where articles_member_id = "", where replies_member_id = "")
+    public static ApiResult<GetMemberDto> toDtoWithArAndRep(Member member){
+        return new ApiResult<>(GetMemberDto.builder()
                 .loginId(member.getLoginId())
                 .nickname(member.getNickname())
                 .memberLevel(member.getMemberLevel())
@@ -55,7 +55,7 @@ public class GetMemberDto {
                 .replies(member.getReplies().stream()
                         .map(reply -> new SimpleReplyDto(reply))
                         .collect(Collectors.toList()))
-                .build();
+                .build());
     }
 
     @Getter
@@ -64,11 +64,13 @@ public class GetMemberDto {
     @NoArgsConstructor
     static class SimpleArticleDto{
         private Long articleId;
+        private ArticleCategory articleCategory;
         private String title;
         private String body;
 
         public SimpleArticleDto(Article article){
             articleId = article.getId();
+            articleCategory = article.getArticleCategory();
             title = article.getTitle();
             body = article.getBody();
         }

@@ -1,16 +1,17 @@
 package com.example.article.web.controller;
 
-import com.example.article.domain.Article;
-import com.example.article.domain.Member;
-import com.example.article.domain.Reply;
+import com.example.article.domain.*;
+import com.example.article.repository.ArticleRepository;
+import com.example.article.service.*;
 import com.example.article.web.form.ArticleUpdateForm;
 import com.example.article.web.form.CreateArticleForm;
 import com.example.article.web.form.ReplyForm;
-import com.example.article.service.ArticleServiceImpl;
-import com.example.article.service.MemberServiceImpl;
-import com.example.article.service.ReplyServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,30 +23,76 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
+import static org.springframework.data.domain.Sort.Direction.DESC;
+
 @RequestMapping("/article")
 @Controller
 @RequiredArgsConstructor
 @Slf4j
 public class ArticleController {
 
-    private final ArticleServiceImpl articleService;
-    private final MemberServiceImpl memberService;
-    private final ReplyServiceImpl replyService;
+    private final ArticleService articleService;
+    private final MemberService memberService;
+    private final ReplyService replyService;
+    private final ArticleRepository articleRepository;
+
+    @GetMapping("/articles")
+    public String showArticlesByCategory(
+            @PageableDefault(sort = "id",direction = DESC) Pageable pageable,
+            @RequestParam(name = "category") String categoryParam,
+            Model model
+    ){
+
+        Page<Article> pagedArticles = articleRepository.findAllByArticleCategory(
+                ArticleCategory.valueOf(categoryParam),pageable
+        );
+        List<Article> articles = pagedArticles.getContent();
+
+        int currentPage = pagedArticles.getPageable().getPageNumber();
+
+        int startPage = (currentPage / 10) * 10;
+
+        int endPage = Math.min((currentPage / 10) * 10 + 9,pagedArticles.getTotalPages());
+//        endPage = Math.min(pagedArticles.getPageable().getPageNumber()+9,pagedArticles.getTotalPages());
+
+        System.out.println("startPage:"+startPage);
+        System.out.println("endPage:"+endPage);
+
+        model.addAttribute("currentPage",currentPage);
+        model.addAttribute("hasNext", pagedArticles.hasNext());
+        model.addAttribute("startPage",startPage);
+        model.addAttribute("endPage",endPage);
+
+        model.addAttribute("category",ArticleCategory.valueOf(categoryParam));
+        model.addAttribute("articles",articles);
+        return "article/articles";
+    }
 
     @GetMapping("/create")
     public String createArticle(@ModelAttribute("article") Article article,
                                 @SessionAttribute(name = "memberId") Long memberId,Model model){
         Member member = memberService.findById(memberId);
+
+        MemberLevel memberLevel = member.getMemberLevel();
+
+        List<ArticleCategory> articleCategories = ArticleCategory.filterCategoriesByMemberLevel(memberLevel);
+
+        model.addAttribute("articleCategories",articleCategories);
         model.addAttribute("member",member);
         return "article/addForm";
     }
 
     @PostMapping("/create")
-    public String create(@Validated @ModelAttribute("article") CreateArticleForm createArticleForm, BindingResult bindingResult,
+    public String create(@Validated @ModelAttribute("article") CreateArticleForm createArticleForm,
+                         BindingResult bindingResult,
                          @SessionAttribute(name = "memberId") Long memberId, Model model){
 
         Member member = memberService.findById(memberId);
+        MemberLevel memberLevel = member.getMemberLevel();
+
+        List<ArticleCategory> articleCategories = ArticleCategory.filterCategoriesByMemberLevel(memberLevel);
         model.addAttribute("member",member);
+        model.addAttribute("articleCategories",articleCategories);
 
         if(bindingResult.hasErrors()){
             log.info("errors={}",bindingResult);

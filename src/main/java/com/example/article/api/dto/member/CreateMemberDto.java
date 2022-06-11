@@ -3,6 +3,7 @@ package com.example.article.api.dto.member;
 import com.example.article.api.ApiResult;
 import com.example.article.domain.Member;
 import com.example.article.domain.MemberLevel;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
@@ -40,7 +41,10 @@ public class CreateMemberDto {
     @Builder
     public static class CreateMemberResponse{
         private String nickname;
+
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime joinedAt;
+
         private MemberLevel memberLevel;
 
        public static ApiResult<CreateMemberResponse> toDto(Member member){

@@ -1,5 +1,6 @@
 package com.example.article.api.dto.member;
 
+import com.example.article.api.ApiResult;
 import com.example.article.domain.Member;
 import com.example.article.domain.MemberLevel;
 import lombok.*;
@@ -36,11 +37,11 @@ public class LoginMemberDto {
         private String nickname;
         private MemberLevel memberLevel;
 
-        public static LoginMemberDto.LoginMemberResponse toDto(Member member){
-            return LoginMemberResponse.builder()
+        public static ApiResult<LoginMemberResponse> toDto(Member member){
+            return new ApiResult<>(LoginMemberResponse.builder()
                     .nickname(member.getNickname())
                     .memberLevel(member.getMemberLevel())
-                    .build();
+                    .build());
         }
     }
 }

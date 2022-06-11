@@ -14,41 +14,133 @@
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="py-5 text-center">
-        <h2>게시물 목록</h2>
+<div class="container-md">
+<div class="py-5 text-center">
+    <h2>게시물 목록</h2>
+</div>
+<div class="row g-2">
+    <div class="col-1">
+        <button type="button" class="btn btn-secondary btn-sm"
+                th:onclick="|location.href='@{/member/login}'|">로그인</button>
     </div>
-    <div class="row g-2">
-        <div class="col-2">
-            <button type="button" class="btn btn-secondary btn-sm"
-                    th:onclick="|location.href='@{/member/login}'|">로그인</button>
+    <div class="col-2">
+        <button type="button" class="btn btn-secondary btn-sm"
+                th:onclick="|location.href='@{/member/signUp}'|">회원가입</button>
+    </div>
+</div>
+<br>
+    <!-- 가입인사, 자유게시판 -->
+    <div class="row">
+        <div class="col">
+            <p class="fw-normal">[가입 인사 게시판]
+            <a href="" th:href="@{/article/articles(category=${'GREET'})}">▶더보기</a></p>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>조회수</th>
+                </tr> <!-- 가로줄 하나 -->
+                </thead>
+                <tbody>
+                <tr th:each="article : ${articles}">
+                    <div th:if="${article.articleCategory.name() eq 'GREET'}">
+                        <td th:text="${article.id}"></td>
+                        <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.id})}"
+                               th:text="|${article.title}[${article.replies.size()}]|">title</a></td>
+                        <td th:text="${article.member.nickname}"></td>
+                        <td th:text="${article.hit}"></td>
+                    </div>
+                </tr>
+                </tbody>
+            </table>
         </div>
-        <div class="col-3">
-            <button type="button" class="btn btn-secondary btn-sm"
-                    th:onclick="|location.href='@{/member/signUp}'|">회원가입</button>
+
+        <div class="col">
+            <p class="fw-normal">[자유 게시판]
+            <a href="" th:href="@{/article/articles(category=${'FREE'})}">▶더보기</a></p>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>조회수</th>
+                </tr> <!-- 가로줄 하나 -->
+                </thead>
+                <tbody>
+                <tr th:each="article : ${articles}">
+                    <div th:if="${article.articleCategory.name() eq 'FREE'}">
+                        <td th:text="${article.id}"></td>
+                        <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.id})}"
+                               th:text="|${article.title}[${article.replies.size()}]|">title</a></td>
+                        <td th:text="${article.member.nickname}"></td>
+                        <td th:text="${article.hit}"></td>
+                    </div>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
-    <br>
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>번호</th>
-            <th>제목</th>
-            <th>작성자</th>
-            <th>조회수</th>
-        </tr> <!-- 가로줄 하나 -->
-        </thead>
-        <tbody>
-        <tr th:each="article : ${articles}">
-            <td th:text="${article.id}"></td>
-            <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.id})}"
-                   th:text="|${article.title}[${article.replies.size()}]|">title</a></td>
-            <td th:text="${article.member.nickname}"></td>
-            <td th:text="${article.hit}"></td>
-        </tr>
-        </tbody>
-    </table>
-    <br>
+
+    <!-- 장터 게시판, 토론 게시판 -->
+    <div class="row">
+        <div class="col">
+            <p class="fw-normal">[장터 게시판]
+                <a href="" th:href="@{/article/articles(category=${'MARKET'})}">▶더보기</a></p>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>조회수</th>
+                </tr> <!-- 가로줄 하나 -->
+                </thead>
+                <tbody>
+                <tr th:each="article : ${articles}">
+                    <div th:if="${article.articleCategory.name() eq 'MARKET'}">
+                        <td th:text="${article.id}"></td>
+                        <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.id})}"
+                               th:text="|${article.title}[${article.replies.size()}]|">title</a></td>
+                        <td th:text="${article.member.nickname}"></td>
+                        <td th:text="${article.hit}"></td>
+                    </div>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col">
+            <p class="fw-normal">[토론 게시판]
+            <a href="" th:href="@{/article/articles(category=${'DEBATE'})}">▶더보기</a></p>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>조회수</th>
+                </tr> <!-- 가로줄 하나 -->
+                </thead>
+                <tbody>
+                <tr th:each="article : ${articles}">
+                    <div th:if="${article.articleCategory.name() eq 'DEBATE'}">
+                        <td th:text="${article.id}"></td>
+                        <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.id})}"
+                               th:text="|${article.title}[${article.replies.size()}]|">title</a></td>
+                        <td th:text="${article.member.nickname}"></td>
+                        <td th:text="${article.hit}"></td>
+                    </div>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <br> <hr>
+
     <p>
     <form action="/article/search">
         <fieldset>

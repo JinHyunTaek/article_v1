@@ -32,4 +32,13 @@ public class CreateMemberForm {
                 .memberLevel(MemberLevel.NEW)
                 .build();
     }
+
+    public Member toEntityForTester(){
+        return Member.builder()
+                .loginId(this.loginId)
+                .password(this.password)
+                .nickname(this.nickname)
+                .memberLevel(MemberLevel.ADMIN)
+                .build();
+    }
 }

@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            max-width: 650px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+        .selected{
+            border-color: #41464b;
+            color: #41464b;
+            font-weight: bold;
+        }
+        .pagination{
+            display: inline-block;
+            width: 40px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="py-5 text-center">
+        <h2>게시물 목록</h2>
+    </div>
+
+    <p class="fw-normal" th:text="|${category.getDescription()}|">[게시판]</p>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>조회수</th>
+        </tr> <!-- 가로줄 하나 -->
+        </thead>
+        <tbody>
+        <tr th:each="article : ${articles}">
+                <td th:text="${article.id}"></td>
+                <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.id})}"
+                       th:text="|${article.title}[${article.replies.size()}]|">title</a></td>
+                <td th:text="${article.member.nickname}"></td>
+                <td th:text="${article.hit}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:if="${startPage >= 10}" class="text-dark"
+       th:href="@{/article/articles(category=${category},page=${startPage-1})}">◀이전</a>
+
+<!--    th:class="${errors?.containsKey('itemNameError')} ? 'form-control field-error' : 'form-control'"-->
+    <div th:class="pagination" th:each="page : ${#numbers.sequence(startPage,endPage)}">
+        <a th:class="${page == currentPage} ? 'selected' : 'text-dark'"
+           th:href="@{/article/articles(category=${category},page=${page})}"
+           th:text="|[${page+1}]|"></a>
+    </div>
+
+    <a class="text-dark" th:if="${hasNext}" th:href="@{/article/articles(category=${category},page=${endPage+1})}"
+       th:text="|▶다음|">▶다음</a>
+    <hr>
+
+    <p><button class="btn btn-primary float-end" th:onclick="|location.href='@{/article/create}'|">
+        게시물 등록
+    </button>
+    <div class="g-lg-4">
+        <button class="btn btn-primary float-end"
+                th:onclick="|location.href='@{/}'|">목록으로</button>
+    </div></p>
+
+    <p>
+    <form action="/article/search">
+        <fieldset>
+            검색분류 <select name="selection">
+            <option value="titleAndBody">제목+내용</option>
+            <option value="title">제목만</option>
+            <option value="body">내용만</option>
+        </select> <!-- select 태그 안에 옵션 값 존재 -->
+            검색어 <input type="text" name="searchValue" >
+            <input type="submit" name="searchButton" value="검색">
+        </fieldset>
+    </form>
+    </p>
+</div> <!-- /container -->
+</body>
+</html>

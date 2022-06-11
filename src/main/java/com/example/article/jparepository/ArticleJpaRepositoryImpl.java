@@ -1,4 +1,4 @@
-package com.example.article.repository;
+package com.example.article.jparepository;
 
 import com.example.article.domain.Article;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class ArticleRepositoryImpl implements ArticleRepository{
+public class ArticleJpaRepositoryImpl implements ArticleJpaRepository {
 
     private final EntityManager em;
 

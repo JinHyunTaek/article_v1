@@ -1,7 +1,7 @@
 package com.example.article.api.dto.article;
 
+import com.example.article.api.ApiResult;
 import com.example.article.domain.Article;
-import com.example.article.domain.MemberLevel;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -38,11 +38,11 @@ public class UpdateArticleDto {
         private String title;
         private String body;
 
-        public static UpdateArticleResponse toDto(Article article){
-            return UpdateArticleResponse.builder()
+        public static ApiResult<UpdateArticleResponse> toDto(Article article){
+            return new ApiResult<>(UpdateArticleResponse.builder()
                     .title(article.getTitle())
                     .body(article.getBody())
-                    .build();
+                    .build());
         }
     }
 }

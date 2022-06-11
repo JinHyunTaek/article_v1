@@ -1,17 +1,15 @@
 package com.example.article.api.error.errorresponse;
 
 import lombok.*;
-import org.springframework.http.HttpStatus;
 
 import java.util.List;
-import java.util.Optional;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MemberErrorResponse {
+public class BasicErrorResponse {
 
     private List<String> memberErrorFields;
     private String memberErrorCode;

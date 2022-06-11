@@ -14,7 +14,7 @@
     </style>
 </head>
 <body>
-<div class="container">
+<div class="container-md">
     <div class="py-5 text-center">
         <h2>게시물 목록</h2>
         <form th:action="@{/member/logout}" method="post">
@@ -27,25 +27,117 @@
     <div>
         <h4 th:text="|${member?.nickname}님 환영합니다.|"></h4>
     </div>
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>번호</th>
-            <th>제목</th>
-            <th>작성자</th>
-            <th>조회수</th>
-        </tr> <!-- 가로줄 하나 -->
-        </thead>
-        <tbody>
-        <tr th:each="article : ${articles}">
-            <td th:text="${article.id}"></td>
-            <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.id})}"
-                   th:text="|${article.title}[${article.replies.size()}]|">title</a></td>
-            <td th:text="${article.member.nickname}">닉네임</td>
-            <td th:text="${article.hit}">0</td>
-        </tr>
-        </tbody>
-    </table>
+    <!-- 가입인사, 자유게시판 -->
+    <div class="row">
+        <div class="col">
+            <p class="fw-normal">[가입 인사 게시판]
+                <a href="" th:href="@{/article/articles(category=${'GREET'})}">▶더보기</a></p>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>조회수</th>
+                </tr> <!-- 가로줄 하나 -->
+                </thead>
+                <tbody>
+                <tr th:each="article : ${articles}">
+                    <div th:if="${article.articleCategory.name() eq 'GREET'}">
+                        <td th:text="${article.id}"></td>
+                        <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.id})}"
+                               th:text="|${article.title}[${article.replies.size()}]|">title</a></td>
+                        <td th:text="${article.member.nickname}"></td>
+                        <td th:text="${article.hit}"></td>
+                    </div>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col">
+            <p class="fw-normal">[자유 게시판]
+                <a href="" th:href="@{/article/articles(category=${'FREE'})}">▶더보기</a></p>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>조회수</th>
+                </tr> <!-- 가로줄 하나 -->
+                </thead>
+                <tbody>
+                <tr th:each="article : ${articles}">
+                    <div th:if="${article.articleCategory.name() eq 'FREE'}">
+                        <td th:text="${article.id}"></td>
+                        <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.id})}"
+                               th:text="|${article.title}[${article.replies.size()}]|">title</a></td>
+                        <td th:text="${article.member.nickname}"></td>
+                        <td th:text="${article.hit}"></td>
+                    </div>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 장터 게시판, 토론 게시판 -->
+    <div class="row">
+        <div class="col">
+            <p class="fw-normal">[장터 게시판]
+                <a href="" th:href="@{/article/articles(category=${'MARKET'})}">▶더보기</a></p>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>조회수</th>
+                </tr> <!-- 가로줄 하나 -->
+                </thead>
+                <tbody>
+                <tr th:each="article : ${articles}">
+                    <div th:if="${article.articleCategory.name() eq 'MARKET'}">
+                        <td th:text="${article.id}"></td>
+                        <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.id})}"
+                               th:text="|${article.title}[${article.replies.size()}]|">title</a></td>
+                        <td th:text="${article.member.nickname}"></td>
+                        <td th:text="${article.hit}"></td>
+                    </div>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col">
+            <p class="fw-normal">[토론 게시판]
+                <a href="" th:href="@{/article/articles(category=${'DEBATE'})}">▶더보기</a></p>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>조회수</th>
+                </tr> <!-- 가로줄 하나 -->
+                </thead>
+                <tbody>
+                <tr th:each="article : ${articles}">
+                    <div th:if="${article.articleCategory.name() eq 'DEBATE'}">
+                        <td th:text="${article.id}"></td>
+                        <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.id})}"
+                               th:text="|${article.title}[${article.replies.size()}]|">title</a></td>
+                        <td th:text="${article.member.nickname}"></td>
+                        <td th:text="${article.hit}"></td>
+                    </div>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <br> <hr>
     <button class="btn btn-primary float-end" th:onclick="|location.href='@{/article/create}'|">
         게시물 등록
     </button>

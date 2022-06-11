@@ -1,12 +1,11 @@
-package com.example.article.api.error.member;
+package com.example.article.api.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-public enum MemberErrorCode {
+public enum BasicErrorCode {
 
     NO_MEMBER_CONFIGURED("no_member","접근 권한 없음"),
     ID_OR_PASSWORD_NOT_MATCHED("idOrPassword","아이디 혹은 비밀번호가 일치하지 않습니다."),

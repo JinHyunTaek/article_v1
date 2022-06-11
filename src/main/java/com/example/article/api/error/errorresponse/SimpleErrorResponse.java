@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BasicErrorResponse {
+public class SimpleErrorResponse {
 
     private String url;
     private String message;

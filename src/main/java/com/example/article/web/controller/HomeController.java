@@ -1,36 +1,50 @@
 package com.example.article.web.controller;
 
 import com.example.article.domain.Article;
+import com.example.article.domain.ArticleCategory;
 import com.example.article.domain.Member;
 import com.example.article.domain.Reply;
-import com.example.article.service.ArticleServiceImpl;
-import com.example.article.service.MemberServiceImpl;
-import com.example.article.service.ReplyServiceImpl;
+import com.example.article.repository.ArticleRepository;
+import com.example.article.service.ArticleService;
+import com.example.article.service.MemberService;
+import com.example.article.service.ReplyService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
 
-    private final ArticleServiceImpl articleService;
-    private final MemberServiceImpl memberService;
-    private final ReplyServiceImpl replyService;
+    private final ArticleService articleService;
+    private final ArticleRepository articleRepository;
+    private final MemberService memberService;
+    private final ReplyService replyService;
 
     @GetMapping("/")
     public String home(@SessionAttribute(name = "memberId", required = false) Long memberId,
+                       @PageableDefault(sort = "id",direction = Sort.Direction.DESC, size = 10) Pageable pageable,
                        Model model) {
 
-        List<Article> articles = articleService.findArticlesByPageDesc();
+        Page<Article> pagedArticles = articleRepository.findAll(pageable);
+        List<Article> articles = pagedArticles.getContent();
 
+        model.addAttribute("articleCategories",ArticleCategory.values());
         model.addAttribute("articles", articles);
 
         if (memberId == null) {
@@ -65,7 +79,7 @@ public class HomeController {
             hit = article.getHit();
             member = article.getMember();
             replies = article.getReplies().stream().
-                    map(reply -> new ReplyDto(reply)).collect(Collectors.toList());
+                    map(reply -> new ReplyDto(reply)).collect(toList());
         }
     }
 

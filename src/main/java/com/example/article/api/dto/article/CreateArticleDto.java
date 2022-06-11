@@ -2,6 +2,8 @@ package com.example.article.api.dto.article;
 
 
 import com.example.article.domain.Article;
+import com.example.article.domain.ArticleCategory;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -28,6 +30,9 @@ public class CreateArticleDto {
         @NotBlank
         @Size(min = 2, max = 10)
         private String body;
+
+        @NotNull
+        private ArticleCategory articleCategory;
     }
 
     @Getter
@@ -38,12 +43,17 @@ public class CreateArticleDto {
     public static class CreateArticleResponse{
 
         private Long id;
+
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime createdAt;
+
+        private ArticleCategory articleCategory;
 
         public static CreateArticleResponse toDto(Article article){
             return CreateArticleResponse.builder()
                     .id(article.getId())
                     .createdAt(article.getCreateDateTime())
+                    .articleCategory(article.getArticleCategory())
                     .build();
         }
     }

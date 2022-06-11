@@ -1,11 +1,11 @@
-package com.example.article.repository;
+package com.example.article.jparepository;
 
 import com.example.article.domain.Article;
 import com.example.article.domain.Reply;
 
 import java.util.List;
 
-public interface ReplyRepository {
+public interface ReplyJpaRepository {
 
     void save(Reply reply);
 

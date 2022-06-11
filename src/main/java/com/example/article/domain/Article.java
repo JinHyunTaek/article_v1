@@ -27,6 +27,9 @@ public class Article {
     @Column(name = "article_id")
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    private ArticleCategory articleCategory;
+
     private String title;
 
     @Column(columnDefinition = "TEXT")
@@ -60,6 +63,7 @@ public class Article {
     public void update(String title, String body){
         this.title = title;
         this.body = body;
+        this.modifiedDateTime = LocalDateTime.now();
     }
 
     public void addHitCount(){

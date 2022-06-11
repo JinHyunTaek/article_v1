@@ -8,11 +8,11 @@ import com.example.article.api.dto.member.LoginMemberDto.LoginMemberRequest;
 import com.example.article.api.dto.member.LoginMemberDto.LoginMemberResponse;
 import com.example.article.api.dto.member.UpdateMemberDto.UpdateMemberRequest;
 import com.example.article.api.dto.member.UpdateMemberDto.UpdateMemberResponse;
-import com.example.article.api.error.member.MemberErrorCode;
-import com.example.article.api.error.member.MemberException;
+import com.example.article.api.error.BasicErrorCode;
+import com.example.article.api.error.BasicException;
 import com.example.article.domain.Member;
 import com.example.article.domain.MemberLevel;
-import com.example.article.service.MemberServiceImpl;
+import com.example.article.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @RequestMapping("/api/member")
 @RestController
@@ -33,40 +34,43 @@ import static org.springframework.http.HttpStatus.CREATED;
 @RequiredArgsConstructor
 public class MemberApiController {
 
-    private final MemberServiceImpl memberService;
+    private final MemberService memberService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginMemberResponse> login(
+    public ResponseEntity<ApiResult<LoginMemberResponse>> login(
             @RequestBody @Valid LoginMemberRequest request, HttpServletRequest servletRequest
     ){
         Member loginMember = memberService.login(request.getLoginId(), request.getPassword());
 
         if(loginMember==null){
-            throw new MemberException(MemberErrorCode.ID_OR_PASSWORD_NOT_MATCHED,"id or password");
+            throw new BasicException(BasicErrorCode.ID_OR_PASSWORD_NOT_MATCHED,"id or password");
         }
 
         HttpSession session = servletRequest.getSession();
         session.setAttribute("loginId",loginMember.getId());
 
-        LoginMemberResponse response = LoginMemberResponse.toDto(loginMember);
-        return new ResponseEntity<>(response,HttpStatus.OK);
+        ApiResult<LoginMemberResponse> loginResponse = LoginMemberResponse.toDto(loginMember);
+        return ResponseEntity.ok().body(loginResponse);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logoutV3(HttpServletRequest request){
+    public ResponseEntity<ApiResult<String>> logoutV3(HttpServletRequest request){
         HttpSession session = request.getSession(false); //가져오되, 생성은 x
         if(session!=null){ //세션 있으면
             session.invalidate();
-            return new ResponseEntity<>("logout success",HttpStatus.OK);
+            return ResponseEntity.ok().body(new ApiResult<>("logout success"));
         }
-        return new ResponseEntity<>("no session",HttpStatus.UNAUTHORIZED);
+        return ResponseEntity
+                .status(UNAUTHORIZED)
+                .body(new ApiResult<>("logout failed (세션 정보: " + session.getAttributeNames()+")"));
     }
 
     @GetMapping("/members")
-    public List<GetMemberDto> getMembers(){
+    public List<ApiResult<GetMemberDto>> getMembers(){
         List<Member> members = memberService.findAll();
-        List<GetMemberDto> memberDtoList =
-                members.stream().map(member -> GetMemberDto.toDtoWithAr(member)).collect(Collectors.toList());
+
+        List<ApiResult<GetMemberDto>> memberDtoList = members.stream().map(GetMemberDto::toDtoWithAr)
+                .collect(Collectors.toList());
         return memberDtoList;
     }
 
@@ -82,7 +86,7 @@ public class MemberApiController {
                 .build();
 
         if(memberService.findByNickname(member.getNickname())!=null){
-            throw new MemberException(MemberErrorCode.DUPLICATED_MEMBER_NICKNAME,"nickname");
+            throw new BasicException(BasicErrorCode.DUPLICATED_MEMBER_NICKNAME,"nickname");
         }
 
         memberService.saveMember(member);
@@ -94,21 +98,21 @@ public class MemberApiController {
     }
 
     @GetMapping("/detail/{memberId}")
-    public ResponseEntity<GetMemberDto> getDetail(@PathVariable Long memberId){
+    public ResponseEntity<ApiResult<GetMemberDto>> getDetail(@PathVariable Long memberId){
         Member member = memberService.findById(memberId);
-        GetMemberDto memberDto = GetMemberDto.toDtoWithArAndRep(member);
+        ApiResult<GetMemberDto> memberDto = GetMemberDto.toDtoWithArAndRep(member);
 
-        return new ResponseEntity<>(memberDto,HttpStatus.OK);
+        return ResponseEntity.ok().body(memberDto);
     }
 
     @PostMapping("/update/{memberId}")
-    public ResponseEntity<UpdateMemberResponse> update
+    public ResponseEntity<ApiResult<UpdateMemberResponse>> update
             (@PathVariable Long memberId,
              @Valid @RequestBody UpdateMemberRequest request
             ){
         Member member = memberService.findById(memberId);
         memberService.updateMember(memberId, request.getLoginId(), request.getPassword(), request.getNickname());
-        UpdateMemberResponse response = UpdateMemberResponse.toDto(member);
-        return new ResponseEntity<>(response,HttpStatus.OK);
+        ApiResult<UpdateMemberResponse> updateResponse = UpdateMemberResponse.toDto(member);
+        return new ResponseEntity<>(updateResponse,HttpStatus.OK);
     }
 }

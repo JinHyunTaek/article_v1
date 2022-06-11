@@ -1,10 +1,10 @@
-package com.example.article.repository;
+package com.example.article.jparepository;
 
 import com.example.article.domain.Article;
 
 import java.util.List;
 
-public interface ArticleRepository {
+public interface ArticleJpaRepository {
 
     void save(Article article);
 

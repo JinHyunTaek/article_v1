@@ -1,8 +1,9 @@
 package com.example.article.api.dto.article;
 
+import com.example.article.api.ApiResult;
 import com.example.article.domain.Article;
-import com.example.article.domain.Member;
 import com.example.article.domain.Reply;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -20,8 +21,10 @@ public class GetArticleDto {
 
     private String body;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdDateTime;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedDateTime;
 
     private Integer likeNumber;
@@ -32,7 +35,7 @@ public class GetArticleDto {
 
     private List<SimpleReplyDto> replies;
 
-    public static GetArticleDto getArticleDto(Article article){
+    public static ApiResult<GetArticleDto> getArticleDto(Article article){
         GetArticleDto articleDto = GetArticleDto.builder()
                 .title(article.getTitle())
                 .body(article.getBody())
@@ -45,7 +48,7 @@ public class GetArticleDto {
                         .map(reply -> new SimpleReplyDto(reply))
                         .collect(Collectors.toList()))
                 .build();
-        return articleDto;
+        return new ApiResult<>(articleDto);
     }
 
     @Getter

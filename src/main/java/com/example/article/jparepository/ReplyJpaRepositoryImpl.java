@@ -1,4 +1,4 @@
-package com.example.article.repository;
+package com.example.article.jparepository;
 
 import com.example.article.domain.Article;
 import com.example.article.domain.Reply;
@@ -7,12 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class ReplyRepositoryImpl implements ReplyRepository{
+public class ReplyJpaRepositoryImpl implements ReplyJpaRepository {
 
     private final EntityManager em;
 

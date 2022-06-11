@@ -6,12 +6,12 @@ import com.example.article.api.dto.article.CreateArticleDto.CreateArticleRespons
 import com.example.article.api.dto.article.GetArticleDto;
 import com.example.article.api.dto.article.UpdateArticleDto.UpdateArticleRequest;
 import com.example.article.api.dto.article.UpdateArticleDto.UpdateArticleResponse;
-import com.example.article.api.error.member.MemberErrorCode;
-import com.example.article.api.error.member.MemberException;
+import com.example.article.api.error.BasicErrorCode;
+import com.example.article.api.error.BasicException;
 import com.example.article.domain.Article;
 import com.example.article.domain.Member;
-import com.example.article.service.ArticleServiceImpl;
-import com.example.article.service.MemberServiceImpl;
+import com.example.article.service.ArticleService;
+import com.example.article.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,16 +26,18 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/article")
 public class ArticleApiController {
 
-    private final ArticleServiceImpl articleService;
-    private final MemberServiceImpl memberService;
+    private final ArticleService articleService;
+    private final MemberService memberService;
 
     @GetMapping("/articles")
-    public ResponseEntity<ApiResult<List<GetArticleDto>>> getArticles(){
+    public ResponseEntity<List<ApiResult<GetArticleDto>>> getArticles(){
         List<Article> articles = articleService.findArticlesByPageDesc();
-        List<GetArticleDto> articleDtos = articles.stream()
+        List<ApiResult<GetArticleDto>> articleDtos = articles.stream()
                 .map(article -> GetArticleDto.getArticleDto(article))
                 .collect(Collectors.toList());
-        return ResponseEntity.ok().body(new ApiResult<>(articleDtos));
+        return ResponseEntity
+                .ok()
+                .body(articleDtos);
     }
 
     @PostMapping("/create")
@@ -45,13 +47,14 @@ public class ArticleApiController {
 
         Member member = memberService.findById(request.getMemberId());
         if(member==null){
-            throw new MemberException(MemberErrorCode.NO_MEMBER_CONFIGURED);
+            throw new BasicException(BasicErrorCode.NO_MEMBER_CONFIGURED);
         }
 
         Article article = Article.builder()
                 .member(member)
                 .title(request.getTitle())
                 .body(request.getBody())
+                .articleCategory(request.getArticleCategory())
                 .likeNumber(0)
                 .hit(0)
                 .build();
@@ -66,8 +69,10 @@ public class ArticleApiController {
     @GetMapping("/detail/{articleId}")
     public ResponseEntity<ApiResult<GetArticleDto>> detail(@PathVariable Long articleId){
         Article article = articleService.findById(articleId);
-        GetArticleDto articleDto = GetArticleDto.getArticleDto(article);
-        return ResponseEntity.ok().body(new ApiResult<>(articleDto));
+        ApiResult<GetArticleDto> articleDto = GetArticleDto.getArticleDto(article);
+        return ResponseEntity
+                .ok()
+                .body(articleDto);
     }
 
     @PostMapping("/update/{articleId}")
@@ -77,8 +82,8 @@ public class ArticleApiController {
         Article article = articleService.findById(articleId);
         articleService.updateArticle(articleId,request.getTitle(), request.getBody());
 
-        UpdateArticleResponse updateResponse = UpdateArticleResponse.toDto(article);
-        return ResponseEntity.ok().body(new ApiResult<>(updateResponse));
+        ApiResult<UpdateArticleResponse> updateResponse = UpdateArticleResponse.toDto(article);
+        return ResponseEntity.ok().body(updateResponse);
     }
 
 }

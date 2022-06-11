@@ -1,11 +1,11 @@
-package com.example.article.repository;
+package com.example.article.jparepository;
 
 import com.example.article.domain.Member;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface MemberRepository {
+public interface MemberJpaRepository {
 
     void save(Member member);
 
