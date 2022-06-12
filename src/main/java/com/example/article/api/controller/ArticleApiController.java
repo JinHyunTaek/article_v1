@@ -11,6 +11,7 @@ import com.example.article.api.error.BasicException;
 import com.example.article.domain.Article;
 import com.example.article.domain.Member;
 import com.example.article.repository.ArticleRepository;
+import com.example.article.service.ArticleService;
 import com.example.article.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,7 +30,7 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 @RequestMapping("/api/article")
 public class ArticleApiController {
 
-//    private final ArticleService articleService;
+    private final ArticleService articleService;
     private final ArticleRepository articleRepository;
     private final MemberService memberService;
 
@@ -96,7 +97,7 @@ public class ArticleApiController {
         Article article = articleRepository.findById(articleId).orElseThrow(() ->
                 new BasicException(BasicErrorCode.NO_ARTICLE_CONFIGURED));
 
-        articleRepository.updateArticle(articleId,request.getTitle(), request.getBody());
+        articleService.updateArticle(articleId, request.getTitle(), request.getBody());
 
         ApiResult<UpdateArticleResponse> updateResponse = UpdateArticleResponse.toDto(article);
         return ResponseEntity.ok().body(updateResponse);
