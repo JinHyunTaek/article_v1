@@ -1,20 +1,18 @@
 package com.example.article.web.controller;
 
-import com.example.article.api.error.BasicErrorCode;
 import com.example.article.api.error.BasicException;
 import com.example.article.domain.*;
 import com.example.article.repository.ArticleRepository;
 import com.example.article.repository.MemberRepository;
-import com.example.article.service.*;
+import com.example.article.service.ArticleService;
+import com.example.article.service.ReplyService;
 import com.example.article.web.form.ArticleUpdateForm;
 import com.example.article.web.form.CreateArticleForm;
 import com.example.article.web.form.ReplyForm;
-import com.example.article.web.projections.NicknameOnly;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,8 +24,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import static com.example.article.api.error.BasicErrorCode.NO_ARTICLE_CONFIGURED;
 import static com.example.article.api.error.BasicErrorCode.NO_MEMBER_CONFIGURED;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
@@ -113,7 +111,7 @@ public class ArticleController {
         createArticleForm.setMember(member);
 
         Article article = createArticleForm.toEntity();
-        articleService.save(article);
+        articleRepository.save(article);
 
         return "redirect:/";
     }
@@ -126,7 +124,9 @@ public class ArticleController {
 
         Long articleId = Long.valueOf(request.getParameter("articleId"));
 
-        Article article = articleService.findById(articleId);
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
+
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED));
 
@@ -156,7 +156,8 @@ public class ArticleController {
             articleService.addHitCount(articleId);
         }
 
-        Article article = articleService.findById(articleId);
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
 
         model.addAttribute("article",article);
 
@@ -167,7 +168,10 @@ public class ArticleController {
 
     @GetMapping("/update/{articleId}")
     public String update(@PathVariable Long articleId,Model model){
-        Article article = articleService.findById(articleId);
+
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
+
         model.addAttribute("article",article);
         return "article/updateForm";
     }
@@ -177,7 +181,10 @@ public class ArticleController {
                          @Valid @ModelAttribute("article") ArticleUpdateForm updateForm, BindingResult bindingResult,
                          Model model){
 
-        updateForm.setMember(articleService.findById(articleId).getMember());
+        Member member = articleRepository.findById(articleId)
+                .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED)).getMember();
+
+        updateForm.setMember(member);
 
         if(bindingResult.hasErrors()){
             log.info("errors={}",bindingResult);
@@ -204,6 +211,6 @@ public class ArticleController {
 
     @PostMapping("/delete/{articleId}")
     private void deleteArticle(@PathVariable Long articleId){
-        articleService.deleteArticle(articleId);
+        articleRepository.deleteById(articleId);
     }
 }

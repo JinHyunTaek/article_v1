@@ -15,12 +15,11 @@ import java.util.List;
 public interface ArticleRepository extends JpaRepository<Article,Long> {
     Page<Article> findAll(Pageable pageable);
 
+    Page<Article> findAllByMemberId(@Param("memberId") Long memberId, Pageable pageable);
+
     Page<Article> findAllByArticleCategory(ArticleCategory articleCategory, Pageable pageable);
 
     List<Article> findByMemberIdOrderByIdDesc(@Param("memberId") Long memberId);
 
-    @Transactional
-    @Modifying(clearAutomatically = true) //변경하는 것을 인지
-    @Query("update Article a set a.title = :title, a.body = :body where a.id = :articleId")
-    void updateArticle(@Param("articleId") Long articleId, @Param("title") String title, @Param("body") String body);
+    void deleteById(Long articleId);
 }

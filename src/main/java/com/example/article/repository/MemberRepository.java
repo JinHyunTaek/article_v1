@@ -12,12 +12,10 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member,Long> {
 
-    Optional<Member> findByNickname(String nickname);
+    Member findByNickname(String nickname);
 
     Member findByLoginIdAndPassword(String loginId,String password);
 
     List<NicknameOnly> findProjectionsByNickname(@Param("nickname") String nickname);
 
-    @Query("select m.nickname from Member m where m.nickname in :nicknames")
-    List<String> findNicknameList(@Param("nicknames")Collection<String> nicknames);
 }

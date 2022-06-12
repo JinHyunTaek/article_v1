@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,6 @@ import static java.util.stream.Collectors.*;
 @RequiredArgsConstructor
 public class HomeController {
 
-//    private final ArticleService articleService;
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
 
@@ -54,6 +54,7 @@ public class HomeController {
             return "home";
         }
 
+        System.out.println("memberId="+memberId);
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED));
 

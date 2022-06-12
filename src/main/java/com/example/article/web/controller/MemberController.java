@@ -12,6 +12,10 @@ import com.example.article.web.form.CreateMemberForm;
 import com.example.article.web.form.LoginForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,7 +37,6 @@ import static com.example.article.api.error.BasicErrorCode.NO_MEMBER_CONFIGURED;
 @RequestMapping("/member")
 public class MemberController {
 
-    private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final ArticleRepository articleRepository;
     private final ReplyServiceImpl replyService;
@@ -102,25 +105,40 @@ public class MemberController {
     @GetMapping("/detail/{memberId}")
     public String detail(@PathVariable("memberId") Long memberId,
                          @RequestParam(name = "replies", required = false) String repl,
+                         @PageableDefault(sort = "id",direction = Sort.Direction.DESC, size = 10) Pageable pageable,
                          Model model){
-
-        if(repl!=null) {
-            boolean isGetReplies = Boolean.parseBoolean(repl);
-            model.addAttribute("isGetReplies", isGetReplies);
-        }
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED));
 
-        List<Article> articles = articleRepository.findByMemberIdOrderByIdDesc(memberId);
-        System.out.println("=====");
-        List<Reply> replies = replyService.findRepliesByMemberIdDesc(member.getId());
+        if(repl!=null) {
+            boolean isGetReplies = Boolean.parseBoolean(repl);
+            model.addAttribute("isGetReplies", isGetReplies);
 
-        List<Article> r_articles = replies.stream().map(reply -> reply.getArticle()).collect(Collectors.toList());
+            List<Reply> replies = replyService.findRepliesByMemberIdDesc(member.getId());
+            List<Article> r_articles = replies.stream().map(reply -> reply.getArticle()).collect(Collectors.toList());
+
+            model.addAttribute("r_articles",r_articles);
+        }
+
+        Page<Article> pagedArticles = articleRepository.findAllByMemberId(memberId, pageable);
+        List<Article> articles = pagedArticles.getContent();
+
+        int currentPage = pagedArticles.getPageable().getPageNumber();
+
+        int startPage = (currentPage / 10) * 10;
+
+        int endPage = Math.min((currentPage / 10) * 10 + 9,pagedArticles.getTotalPages());
+
+        System.out.println("=====");
 
         model.addAttribute("member",member);
         model.addAttribute("articles",articles);
-        model.addAttribute("r_articles",r_articles);
+
+        model.addAttribute("currentPage",currentPage);
+        model.addAttribute("hasNext", pagedArticles.hasNext());
+        model.addAttribute("startPage",startPage);
+        model.addAttribute("endPage",endPage);
 
         return "member/detail";
     }
