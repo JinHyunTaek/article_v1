@@ -19,6 +19,10 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
         String requestURI = request.getRequestURI();
 
+        if(request.getQueryString()!=null) {
+            requestURI = request.getRequestURI() + "?" + request.getQueryString();
+        }
+
         String uuid = UUID.randomUUID().toString();
         request.setAttribute(LOG_ID,uuid);
 

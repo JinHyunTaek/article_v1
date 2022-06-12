@@ -36,18 +36,21 @@ public class ArticleApiController {
     private final MemberService memberService;
 
     @GetMapping("/articles")
-    public ResponseEntity<List<ApiResult<GetArticleDto>>> getArticles(
+    public ResponseEntity<Page<ApiResult<GetArticleDto>>> getArticles(
             @PageableDefault(sort = "id",direction = DESC) Pageable pageable
     ){
         Page<Article> pagedArticles = articleRepository.findAll(pageable);
 
-        List<Article> articles = pagedArticles.getContent();
-        List<ApiResult<GetArticleDto>> articleDtos = articles.stream()
-                .map(article -> GetArticleDto.getArticleDto(article))
-                .collect(Collectors.toList());
+//        List<Article> articles = pagedArticles.getContent();
+//        List<ApiResult<GetArticleDto>> articleDtos = pagedArticles.stream()
+//                .map(article -> GetArticleDto.getArticleDto(article))
+//                .collect(Collectors.toList());
+
+        Page<ApiResult<GetArticleDto>> pagedArticleDtos = pagedArticles.map(article -> GetArticleDto.getArticleDto(article));
+
         return ResponseEntity
                 .ok()
-                .body(articleDtos);
+                .body(pagedArticleDtos);
     }
 
     @PostMapping("/create")
