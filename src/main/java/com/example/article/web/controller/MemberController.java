@@ -1,17 +1,17 @@
 package com.example.article.web.controller;
 
+import com.example.article.api.error.BasicException;
 import com.example.article.domain.Article;
 import com.example.article.domain.Member;
 import com.example.article.domain.Reply;
 import com.example.article.repository.ArticleRepository;
-import com.example.article.service.ArticleService;
+import com.example.article.repository.MemberRepository;
+import com.example.article.service.MemberService;
+import com.example.article.service.ReplyServiceImpl;
 import com.example.article.web.form.CreateMemberForm;
 import com.example.article.web.form.LoginForm;
-import com.example.article.service.MemberServiceImpl;
-import com.example.article.service.ReplyServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,7 +25,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.springframework.data.domain.Sort.Direction.DESC;
+import static com.example.article.api.error.BasicErrorCode.NO_MEMBER_CONFIGURED;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,9 +33,9 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 @RequestMapping("/member")
 public class MemberController {
 
-    private final MemberServiceImpl memberService;
+    private final MemberService memberService;
+    private final MemberRepository memberRepository;
     private final ArticleRepository articleRepository;
-    private final ArticleService articleService;
     private final ReplyServiceImpl replyService;
 
     @GetMapping("/signUp")
@@ -54,12 +54,12 @@ public class MemberController {
 
         Member member = memberDto.toEntity();
 
-        if(memberService.findByNickname(member.getNickname())!=null){
+        if(memberRepository.findByNickname(member.getNickname())!=null){
             bindingResult.reject("nicknameError","중복된 닉네임입니다.");
             return "member/addForm";
         }
 
-        memberService.saveMember(member);
+        memberRepository.save(member);
         return "redirect:/";
     }
 
@@ -78,7 +78,7 @@ public class MemberController {
             return "member/loginForm";
         }
 
-        Member loginMember = memberService.login(loginDto.getLoginId(), loginDto.getPassword());
+        Member loginMember = memberRepository.findByLoginIdAndPassword(loginDto.getLoginId(), loginDto.getPassword());
 
         if(loginMember==null){
             bindingResult.reject("loginFail","아이디 또는 비밀번호가 맞지 않습니다.");
@@ -109,10 +109,11 @@ public class MemberController {
             model.addAttribute("isGetReplies", isGetReplies);
         }
 
-        Member member = memberService.findById(memberId);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED));
 
         List<Article> articles = articleRepository.findByMemberIdOrderByIdDesc(memberId);
-//        List<Article> articles = articleService.findArticlesByMemberIdDesc(member.getId());
+        System.out.println("=====");
         List<Reply> replies = replyService.findRepliesByMemberIdDesc(member.getId());
 
         List<Article> r_articles = replies.stream().map(reply -> reply.getArticle()).collect(Collectors.toList());

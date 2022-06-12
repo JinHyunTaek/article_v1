@@ -1,10 +1,13 @@
 package com.example.article.web.controller;
 
+import com.example.article.api.error.BasicErrorCode;
+import com.example.article.api.error.BasicException;
 import com.example.article.domain.Article;
 import com.example.article.domain.ArticleCategory;
 import com.example.article.domain.Member;
 import com.example.article.domain.Reply;
 import com.example.article.repository.ArticleRepository;
+import com.example.article.repository.MemberRepository;
 import com.example.article.service.ArticleService;
 import com.example.article.service.MemberService;
 import com.example.article.service.ReplyService;
@@ -25,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.article.api.error.BasicErrorCode.NO_MEMBER_CONFIGURED;
 import static java.util.stream.Collectors.*;
 
 @Controller
@@ -33,7 +37,7 @@ public class HomeController {
 
 //    private final ArticleService articleService;
     private final ArticleRepository articleRepository;
-    private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
     @GetMapping("/")
     public String home(@SessionAttribute(name = "memberId", required = false) Long memberId,
@@ -50,7 +54,9 @@ public class HomeController {
             return "home";
         }
 
-        Member member = memberService.findById(memberId);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED));
+
         model.addAttribute("member", member);
 
         return "loginHome";

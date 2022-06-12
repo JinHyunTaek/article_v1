@@ -1,11 +1,15 @@
 package com.example.article.web.controller;
 
+import com.example.article.api.error.BasicErrorCode;
+import com.example.article.api.error.BasicException;
 import com.example.article.domain.*;
 import com.example.article.repository.ArticleRepository;
+import com.example.article.repository.MemberRepository;
 import com.example.article.service.*;
 import com.example.article.web.form.ArticleUpdateForm;
 import com.example.article.web.form.CreateArticleForm;
 import com.example.article.web.form.ReplyForm;
+import com.example.article.web.projections.NicknameOnly;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,7 +26,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static com.example.article.api.error.BasicErrorCode.NO_MEMBER_CONFIGURED;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RequestMapping("/article")
@@ -32,9 +38,9 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 public class ArticleController {
 
     private final ArticleService articleService;
-    private final MemberService memberService;
     private final ReplyService replyService;
     private final ArticleRepository articleRepository;
+    private final MemberRepository memberRepository;
 
     @GetMapping("/articles")
     public String showArticlesByCategory(
@@ -48,12 +54,13 @@ public class ArticleController {
         );
         List<Article> articles = pagedArticles.getContent();
 
+        System.out.println("=====");
+
         int currentPage = pagedArticles.getPageable().getPageNumber();
 
         int startPage = (currentPage / 10) * 10;
 
         int endPage = Math.min((currentPage / 10) * 10 + 9,pagedArticles.getTotalPages());
-//        endPage = Math.min(pagedArticles.getPageable().getPageNumber()+9,pagedArticles.getTotalPages());
 
         System.out.println("startPage:"+startPage);
         System.out.println("endPage:"+endPage);
@@ -71,7 +78,9 @@ public class ArticleController {
     @GetMapping("/create")
     public String createArticle(@ModelAttribute("article") Article article,
                                 @SessionAttribute(name = "memberId") Long memberId,Model model){
-        Member member = memberService.findById(memberId);
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(()->new BasicException(NO_MEMBER_CONFIGURED));
 
         MemberLevel memberLevel = member.getMemberLevel();
 
@@ -87,7 +96,9 @@ public class ArticleController {
                          BindingResult bindingResult,
                          @SessionAttribute(name = "memberId") Long memberId, Model model){
 
-        Member member = memberService.findById(memberId);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED));
+
         MemberLevel memberLevel = member.getMemberLevel();
 
         List<ArticleCategory> articleCategories = ArticleCategory.filterCategoriesByMemberLevel(memberLevel);
@@ -116,7 +127,8 @@ public class ArticleController {
         Long articleId = Long.valueOf(request.getParameter("articleId"));
 
         Article article = articleService.findById(articleId);
-        Member member = memberService.findById(memberId);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED));
 
         model.addAttribute("article",article);
         model.addAttribute("member",member);
