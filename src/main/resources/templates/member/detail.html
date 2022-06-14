@@ -53,8 +53,8 @@
         <tr th:if="${isGetReplies==null}" th:each="article : ${articles}">
             <td th:text="${article.id}"></td>
             <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.id})}"
-                   th:text="|${article.title}[${article.replies.size()}]|">title</a></td>
-            <td th:text="${article.member.nickname}"></td>
+            th:text="|${article.title}[${article.replies.size()}]|">title</a></td>
+            <td th:text="${member.nickname}"></td>
             <td th:text="${article.hit}"></td>
         </tr>
         <tr th:if="${isGetReplies!=null}" th:each="r_article : ${r_articles}">

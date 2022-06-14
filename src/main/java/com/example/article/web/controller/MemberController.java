@@ -6,10 +6,12 @@ import com.example.article.domain.Member;
 import com.example.article.domain.Reply;
 import com.example.article.repository.ArticleRepository;
 import com.example.article.repository.MemberRepository;
+import com.example.article.repository.ReplyRepository;
 import com.example.article.service.MemberService;
 import com.example.article.service.ReplyServiceImpl;
 import com.example.article.web.form.CreateMemberForm;
 import com.example.article.web.form.LoginForm;
+import com.example.article.web.projections.IdAndNickname;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -30,6 +32,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.example.article.api.error.BasicErrorCode.NO_MEMBER_CONFIGURED;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Controller
 @RequiredArgsConstructor
@@ -39,7 +42,7 @@ public class MemberController {
 
     private final MemberRepository memberRepository;
     private final ArticleRepository articleRepository;
-    private final ReplyServiceImpl replyService;
+    private final ReplyRepository replyRepository;
 
     @GetMapping("/signUp")
     public String signUp(@ModelAttribute("member") CreateMemberForm memberDto){
@@ -105,17 +108,18 @@ public class MemberController {
     @GetMapping("/detail/{memberId}")
     public String detail(@PathVariable("memberId") Long memberId,
                          @RequestParam(name = "replies", required = false) String repl,
-                         @PageableDefault(sort = "id",direction = Sort.Direction.DESC, size = 10) Pageable pageable,
+                         @PageableDefault(sort = "id",direction = DESC, size = 10) Pageable pageable,
                          Model model){
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED));
+        IdAndNickname memberCustom = memberRepository.findIdNicknameById(memberId).orElseThrow(
+                () -> new BasicException(NO_MEMBER_CONFIGURED)
+        );
 
         if(repl!=null) {
             boolean isGetReplies = Boolean.parseBoolean(repl);
             model.addAttribute("isGetReplies", isGetReplies);
 
-            List<Reply> replies = replyService.findRepliesByMemberIdDesc(member.getId());
+            List<Reply> replies = replyRepository.findAllByMemberId(memberCustom.getId(), Sort.by(DESC,"article"));
             List<Article> r_articles = replies.stream().map(reply -> reply.getArticle()).collect(Collectors.toList());
 
             model.addAttribute("r_articles",r_articles);
@@ -132,7 +136,7 @@ public class MemberController {
 
         System.out.println("=====");
 
-        model.addAttribute("member",member);
+        model.addAttribute("member",memberCustom);
         model.addAttribute("articles",articles);
 
         model.addAttribute("currentPage",currentPage);

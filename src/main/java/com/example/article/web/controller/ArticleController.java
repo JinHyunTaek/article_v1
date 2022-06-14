@@ -4,6 +4,7 @@ import com.example.article.api.error.BasicException;
 import com.example.article.domain.*;
 import com.example.article.repository.ArticleRepository;
 import com.example.article.repository.MemberRepository;
+import com.example.article.repository.ReplyRepository;
 import com.example.article.service.ArticleService;
 import com.example.article.service.ReplyService;
 import com.example.article.web.form.ArticleUpdateForm;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,7 +38,7 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 public class ArticleController {
 
     private final ArticleService articleService;
-    private final ReplyService replyService;
+    private final ReplyRepository replyRepository;
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
 
@@ -141,7 +143,7 @@ public class ArticleController {
         replyForm.setArticle(article);
         replyForm.setMember(member);
         Reply reply = replyForm.toEntity();
-        replyService.save(reply);
+        replyRepository.save(reply);
 
         redirectAttributes.addAttribute("articleId",articleId);
         return "redirect:/article/detail/{articleId}";
@@ -161,7 +163,8 @@ public class ArticleController {
 
         model.addAttribute("article",article);
 
-        List<Reply> replies = replyService.findByArticleId(articleId);
+        List<Reply> replies = replyRepository.findByArticleId(articleId);
+
         model.addAttribute("replies",replies);
         return "article/detail";
     }

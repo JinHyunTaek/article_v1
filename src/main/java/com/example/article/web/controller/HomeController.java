@@ -1,6 +1,5 @@
 package com.example.article.web.controller;
 
-import com.example.article.api.error.BasicErrorCode;
 import com.example.article.api.error.BasicException;
 import com.example.article.domain.Article;
 import com.example.article.domain.ArticleCategory;
@@ -8,9 +7,6 @@ import com.example.article.domain.Member;
 import com.example.article.domain.Reply;
 import com.example.article.repository.ArticleRepository;
 import com.example.article.repository.MemberRepository;
-import com.example.article.service.ArticleService;
-import com.example.article.service.MemberService;
-import com.example.article.service.ReplyService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,17 +16,13 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.example.article.api.error.BasicErrorCode.NO_MEMBER_CONFIGURED;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 @Controller
 @RequiredArgsConstructor
@@ -58,7 +50,9 @@ public class HomeController {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED));
 
+        System.out.println("===");
         model.addAttribute("member", member);
+        System.out.println("===");
 
         return "loginHome";
     }
