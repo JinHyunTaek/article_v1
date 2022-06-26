@@ -6,13 +6,7 @@ import com.example.article.api.dto.article.CreateArticleDto.CreateArticleRespons
 import com.example.article.api.dto.article.GetArticleDto;
 import com.example.article.api.dto.article.UpdateArticleDto.UpdateArticleRequest;
 import com.example.article.api.dto.article.UpdateArticleDto.UpdateArticleResponse;
-import com.example.article.api.error.BasicErrorCode;
-import com.example.article.api.error.BasicException;
-import com.example.article.domain.Article;
-import com.example.article.domain.Member;
-import com.example.article.repository.ArticleRepository;
-import com.example.article.service.ArticleService;
-import com.example.article.service.MemberService;
+import com.example.article.api.service.ArticleApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
@@ -32,22 +24,13 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 @RequestMapping("/api/article")
 public class ArticleApiController {
 
-    private final ArticleService articleService;
-    private final ArticleRepository articleRepository;
-    private final MemberService memberService;
+    private final ArticleApiService articleService;
 
     @GetMapping("/articles")
     public ResponseEntity<Page<ApiResult<GetArticleDto>>> getArticles(
             @PageableDefault(sort = "id",direction = DESC) Pageable pageable
     ){
-        Page<Article> pagedArticles = articleRepository.findAll(pageable);
-
-//        List<Article> articles = pagedArticles.getContent();
-//        List<ApiResult<GetArticleDto>> articleDtos = pagedArticles.stream()
-//                .map(article -> GetArticleDto.getArticleDto(article))
-//                .collect(Collectors.toList());
-
-        Page<ApiResult<GetArticleDto>> pagedArticleDtos = pagedArticles.map(article -> GetArticleDto.getArticleDto(article));
+        Page<ApiResult<GetArticleDto>> pagedArticleDtos = articleService.getArticles(pageable);
 
         return ResponseEntity
                 .ok()
@@ -59,34 +42,15 @@ public class ArticleApiController {
             @RequestBody @Valid CreateArticleRequest request
     ){
 
-        Member member = memberService.findById(request.getMemberId());
-        if(member==null){
-            throw new BasicException(BasicErrorCode.NO_MEMBER_CONFIGURED);
-        }
-
-        Article article = Article.builder()
-                .member(member)
-                .title(request.getTitle())
-                .body(request.getBody())
-                .articleCategory(request.getArticleCategory())
-                .likeNumber(0)
-                .hit(0)
-                .build();
-
-        articleRepository.save(article);
-        CreateArticleResponse response = CreateArticleResponse.toDto(article);
+        CreateArticleResponse response = articleService.create(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ApiResult<>(response));
     }
 
-
     @GetMapping("/detail/{articleId}")
     public ResponseEntity<ApiResult<GetArticleDto>> detail(@PathVariable Long articleId){
-        Article article = articleRepository.findById(articleId).orElseThrow(() ->
-                new BasicException(BasicErrorCode.NO_ARTICLE_CONFIGURED));
-
-        ApiResult<GetArticleDto> articleDto = GetArticleDto.getArticleDto(article);
+        ApiResult<GetArticleDto> articleDto = articleService.detail(articleId);
         return ResponseEntity
                 .ok()
                 .body(articleDto);
@@ -96,12 +60,10 @@ public class ArticleApiController {
     public ResponseEntity<ApiResult<UpdateArticleResponse>> update(
             @PathVariable Long articleId,
             @Valid @RequestBody UpdateArticleRequest request){
-        Article article = articleRepository.findById(articleId).orElseThrow(() ->
-                new BasicException(BasicErrorCode.NO_ARTICLE_CONFIGURED));
 
-        articleService.updateArticle(articleId,request.getTitle(), request.getBody());
+        ApiResult<UpdateArticleResponse> updateResponse =
+                articleService.update(articleId,request);
 
-        ApiResult<UpdateArticleResponse> updateResponse = UpdateArticleResponse.toDto(article);
         return ResponseEntity.ok().body(updateResponse);
     }
 

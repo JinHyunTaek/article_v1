@@ -21,7 +21,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Member {
+public class Member extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -39,11 +39,6 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private List<Article> articles = new ArrayList<>();
-
-    @Column(nullable = false, insertable = false, updatable = false,
-            columnDefinition = "datetime default CURRENT_TIMESTAMP")
-    @CreatedDate
-    private LocalDateTime joinedAt;
 
     @OneToMany(mappedBy = "member")
     private List<Reply> replies = new ArrayList<>();

@@ -50,7 +50,7 @@ public class CreateMemberDto {
        public static ApiResult<CreateMemberResponse> toDto(Member member){
            return new ApiResult<>(CreateMemberResponse.builder()
                    .nickname(member.getNickname())
-                   .joinedAt(member.getJoinedAt())
+                   .joinedAt(member.getCreatedDate())
                    .memberLevel(member.getMemberLevel())
                    .build());
        }

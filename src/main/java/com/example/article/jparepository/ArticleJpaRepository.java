@@ -14,6 +14,6 @@ public interface ArticleJpaRepository {
 
     void deleteArticle(Long id);
 
-    List<Article> findAllByMemberIdDesc(Long memberId);
+//    List<Article> findAllByMemberIdDesc(Long memberId);
 
 }

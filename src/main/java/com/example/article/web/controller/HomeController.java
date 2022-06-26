@@ -73,8 +73,8 @@ public class HomeController {
             id = article.getId();
             title = article.getTitle();
             body = article.getBody();
-            createDateTime = article.getCreateDateTime();
-            modifiedDateTime = article.getModifiedDateTime();
+            createDateTime = article.getCreatedDate();
+            modifiedDateTime = article.getLastModifiedDate();
             likeNumber = article.getLikeNumber();
             hit = article.getHit();
             member = article.getMember();

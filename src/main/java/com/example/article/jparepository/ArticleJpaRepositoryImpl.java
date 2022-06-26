@@ -41,13 +41,13 @@ public class ArticleJpaRepositoryImpl implements ArticleJpaRepository {
         System.out.println("==");
     }
 
-    @Override
-    public List<Article> findAllByMemberIdDesc(Long memberId) {
-        return em.createQuery("select a from Article a " +
-                        "join fetch a.member m " +
-                        "where m.id=:memberId order by a.id desc ")
-                .setParameter("memberId",memberId)
-                .getResultList();
-    }
+//    @Override
+//    public List<Article> findAllByMemberIdDesc(Long memberId) {
+//        return em.createQuery("select a from Article a " +
+//                        "join fetch a.member m " +
+//                        "where m.id=:memberId order by a.id desc ")
+//                .setParameter("memberId",memberId)
+//                .getResultList();
+//    }
 
 }

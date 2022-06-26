@@ -21,7 +21,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Article {
+public class Article extends BaseEntity{
 
     @Id @GeneratedValue(strategy = IDENTITY)
     @Column(name = "article_id")
@@ -34,16 +34,6 @@ public class Article {
 
     @Column(columnDefinition = "TEXT")
     private String body;
-
-    @Column(nullable = false, insertable = false, updatable = false,
-            columnDefinition = "datetime default CURRENT_TIMESTAMP")
-    @CreatedDate
-    private LocalDateTime createDateTime;
-
-    @Column(nullable = false, insertable = false, updatable = false,
-            columnDefinition = "datetime default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP")
-    @LastModifiedDate
-    private LocalDateTime modifiedDateTime;
 
     @Setter
     @Column(nullable = false, columnDefinition = "integer default 0")
@@ -63,7 +53,6 @@ public class Article {
     public void update(String title, String body){
         this.title = title;
         this.body = body;
-        this.modifiedDateTime = LocalDateTime.now();
     }
 
     public void addHitCount(){

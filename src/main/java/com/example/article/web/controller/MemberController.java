@@ -60,7 +60,7 @@ public class MemberController {
 
         Member member = memberDto.toEntity();
 
-        if(memberRepository.findByNickname(member.getNickname())!=null){
+        if(memberRepository.findByNickname(member.getNickname()).isPresent()){
             bindingResult.reject("nicknameError","중복된 닉네임입니다.");
             return "member/addForm";
         }
@@ -84,7 +84,7 @@ public class MemberController {
             return "member/loginForm";
         }
 
-        Member loginMember = memberRepository.findByLoginIdAndPassword(loginDto.getLoginId(), loginDto.getPassword());
+        Member loginMember = memberRepository.findByLoginIdAndPassword(loginDto.getLoginId(), loginDto.getPassword()).get();
 
         if(loginMember==null){
             bindingResult.reject("loginFail","아이디 또는 비밀번호가 맞지 않습니다.");

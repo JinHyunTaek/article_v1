@@ -52,7 +52,7 @@ public class CreateArticleDto {
         public static CreateArticleResponse toDto(Article article){
             return CreateArticleResponse.builder()
                     .id(article.getId())
-                    .createdAt(article.getCreateDateTime())
+                    .createdAt(article.getCreatedDate())
                     .articleCategory(article.getArticleCategory())
                     .build();
         }

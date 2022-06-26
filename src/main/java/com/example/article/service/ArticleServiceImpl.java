@@ -51,9 +51,9 @@ public class ArticleServiceImpl implements ArticleService{
         article.addHitCount();
     }
 
-    @Override
-    public List<Article> findArticlesByMemberIdDesc(Long memberId) {
-        return articleJpaRepository.findAllByMemberIdDesc(memberId);
-    }
+//    @Override
+//    public List<Article> findArticlesByMemberIdDesc(Long memberId) {
+//        return articleJpaRepository.findAllByMemberIdDesc(memberId);
+//    }
 
 }

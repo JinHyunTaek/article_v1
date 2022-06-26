@@ -20,11 +20,11 @@ public class UpdateArticleDto {
         private Long id;
 
         @NotBlank
-        @Size(min = 2, max = 10)
+        @Size(min = 2, max = 30)
         private String title;
 
         @NotBlank
-        @Size(min = 2, max = 10)
+        @Size(min = 2, max = 1000)
         private String body;
     }
 

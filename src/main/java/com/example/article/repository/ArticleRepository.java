@@ -4,6 +4,7 @@ import com.example.article.domain.Article;
 import com.example.article.domain.ArticleCategory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,7 +12,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ArticleRepository extends JpaRepository<Article,Long> {
-    Page<Article> findAll(Pageable pageable);
 
     @Query(value = "select a from Article a left join a.member m where a.member.id=:memberId",
             countQuery = "select count(a) from Article a")
@@ -23,5 +23,7 @@ public interface ArticleRepository extends JpaRepository<Article,Long> {
 
     void deleteById(Long articleId);
 
-
+    @Override
+    @EntityGraph(attributePaths = {"member"})
+    Page<Article> findAll(Pageable pageable);
 }

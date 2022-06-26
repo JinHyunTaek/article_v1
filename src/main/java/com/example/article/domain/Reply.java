@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
@@ -16,7 +17,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Reply {
+@EntityListeners(AuditingEntityListener.class)
+public class Reply extends BaseEntity{
 
     @Id @GeneratedValue(strategy = IDENTITY)
     @Column(name = "reply_id")

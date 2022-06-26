@@ -3,6 +3,7 @@ package com.example.article.api.dto.article;
 import com.example.article.api.ApiResult;
 import com.example.article.domain.Article;
 import com.example.article.domain.Reply;
+import com.example.article.web.projections.NicknameOnly;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
@@ -16,6 +17,8 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Builder
 public class GetArticleDto {
+
+    private Long id;
 
     private String title;
 
@@ -31,18 +34,22 @@ public class GetArticleDto {
 
     private Integer hit;
 
+    private Long memberId;
+
     private String nickname;
 
     private List<SimpleReplyDto> replies;
 
     public static ApiResult<GetArticleDto> getArticleDto(Article article){
         GetArticleDto articleDto = GetArticleDto.builder()
+                .id(article.getId())
                 .title(article.getTitle())
                 .body(article.getBody())
-                .createdDateTime(article.getCreateDateTime())
-                .modifiedDateTime(article.getModifiedDateTime())
+                .createdDateTime(article.getCreatedDate())
+                .modifiedDateTime(article.getLastModifiedDate())
                 .likeNumber(article.getLikeNumber())
                 .hit(article.getHit())
+                .memberId(article.getMember().getId())
                 .nickname(article.getMember().getNickname())
                 .replies(article.getReplies().stream()
                         .map(reply -> new SimpleReplyDto(reply))

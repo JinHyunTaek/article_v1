@@ -18,5 +18,5 @@ public interface ArticleService {
 
     void addHitCount(Long articleId);
 
-    List<Article> findArticlesByMemberIdDesc(Long memberId);
+//    List<Article> findArticlesByMemberIdDesc(Long memberId);
 }
