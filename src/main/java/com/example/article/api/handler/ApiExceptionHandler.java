@@ -19,7 +19,7 @@ import java.util.List;
 
 import static com.example.article.api.error.BasicErrorCode.SIZE_NOT_MATCHED;
 
-@RestControllerAdvice
+@RestControllerAdvice("com.example.article.api")
 @Slf4j
 public class GlobalExceptionHandler {
 
@@ -89,7 +89,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResult<SimpleErrorResponse>>  handleServerException(
             Exception e, HttpServletRequest request){
-        log.error("error message: {}, url: {}",e.getMessage(),request.getRequestURI());
+        log.error("exception.class, error message: {}, url: {}",e.getMessage(),request.getRequestURI());
         SimpleErrorResponse errorResponse = SimpleErrorResponse.builder()
                 .url(request.getRequestURI())
                 .message(e.getMessage())
