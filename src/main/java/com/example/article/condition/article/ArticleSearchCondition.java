@@ -1,10 +1,10 @@
-package com.example.article.condition;
+package com.example.article.condition.article;
 
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import static com.example.article.condition.ArticleSearchCondition.ArticleSearchConditionValue.*;
+import static com.example.article.condition.article.ArticleSearchCondition.ArticleSearchConditionValue.*;
 
 @Data
 public class ArticleSearchCondition{

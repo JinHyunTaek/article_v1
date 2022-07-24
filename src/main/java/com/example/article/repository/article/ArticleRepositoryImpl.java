@@ -1,9 +1,9 @@
-package com.example.article.repository;
+package com.example.article.repository.article;
 
 import com.example.article.condition.article.ArticleBasicCondition;
 import com.example.article.condition.article.ArticleSearchCondition;
-import com.example.article.domain.Article;
 import com.example.article.domain.ArticleCategory;
+import com.example.article.domain.Reply;
 import com.example.article.web.dto.QSimpleArticleDto;
 import com.example.article.web.dto.SimpleArticleDto;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -18,9 +18,12 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static com.example.article.domain.ArticleCategory.NOTICE;
 import static com.example.article.domain.QArticle.article;
 import static com.example.article.domain.QMember.member;
+import static com.example.article.domain.QReply.reply;
 
 public class ArticleRepositoryImpl implements ArticleRepositoryCustom{
 
@@ -32,7 +35,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom{
     }
 
     @Override
-    public Page<SimpleArticleDto> searchArticle(ArticleSearchCondition condition, Pageable pageable) {
+    public Page<SimpleArticleDto> search(ArticleSearchCondition condition, Pageable pageable) {
 
         List<SimpleArticleDto> articles = getArticleDtoSample(pageable)
                 .where(
@@ -74,7 +77,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom{
     }
 
     @Override
-    public Page<SimpleArticleDto> findArticleByBasicCondition(ArticleBasicCondition condition, Pageable pageable) {
+    public Page<SimpleArticleDto> findByBasicCondition(ArticleBasicCondition condition, Pageable pageable) {
 
         List<SimpleArticleDto> articles = getArticleDtoSample(pageable)
                 .where(
@@ -87,7 +90,8 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom{
                 .select(article.count())
                 .from(article)
                 .where(
-                        categoryEq(condition.getCategory())
+                        categoryEq(condition.getCategory()),
+                        memberIdEq(condition.getMemberId())
                 );
         return PageableExecutionUtils.getPage(articles,pageable,() -> countQuery.fetchOne());
     }
@@ -104,41 +108,70 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom{
     }
 
     @Override
-    public Page<Article> findArticleForHome(Pageable pageable) {
-        List<ArticleCategory> articleCategories = Arrays.stream(ArticleCategory.values()).toList();
-
-        List<Article> articles = queryFactory
-                .select(article)
-                .from(article)
-                .join(article.member,member)
-                .limit(10)
-                .groupBy(article.articleCategory)
+    public Page<SimpleArticleDto> findByReplies(List<Reply> replies, Pageable pageable) {
+        List<SimpleArticleDto> articles = queryFactory
+                .selectDistinct(getSimpleArticleDto())
+                .from(reply)
+                .join(reply.article, article)
+                .join(reply.member,member)
+                .where(reply.in(replies))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(article.id.desc())
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory
-                .select(article.count())
-                .from(article)
-                .limit(10)
-                .groupBy(article.articleCategory);
-
+                .select(article.countDistinct())
+                .from(reply)
+                .where(reply.in(replies))
+                .join(reply.article, article);
         return PageableExecutionUtils.getPage(articles,pageable,() -> countQuery.fetchOne());
     }
 
-    JPAQuery<SimpleArticleDto> getArticleDtoSample(Pageable pageable){
+    @Override
+    public List<SimpleArticleDto> findTop10ByCategory(ArticleCategory articleCategory) {
+
         return queryFactory
-                .select(new QSimpleArticleDto(
-                        article.id,
-                        article.title,
-                        article.replies.size(),
-                        member.nickname,
-                        article.createdDate,
-                        article.hit
-                ))
+                .select(getSimpleArticleDtoWithCategory())
+                .from(article)
+                .join(article.member,member)
+                .where(article.articleCategory.eq(articleCategory))
+                .orderBy(article.id.desc())
+                .limit(10)
+                .fetch();
+    }
+
+    private JPAQuery<SimpleArticleDto> getArticleDtoSample(Pageable pageable){
+        return queryFactory
+                .select(getSimpleArticleDto())
                 .from(article)
                 .join(article.member, member)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(article.id.desc());
+    }
+
+    private QSimpleArticleDto getSimpleArticleDto() {
+        return new QSimpleArticleDto(
+                article.id,
+                article.title,
+                article.replies.size(),
+                member.nickname,
+                article.createdDate,
+                article.hit
+        );
+    }
+
+    private QSimpleArticleDto getSimpleArticleDtoWithCategory() {
+        return new QSimpleArticleDto(
+                article.id,
+                article.title,
+                article.replies.size(),
+                member.nickname,
+                article.createdDate,
+                article.hit,
+                article.articleCategory
+        );
     }
 
 }

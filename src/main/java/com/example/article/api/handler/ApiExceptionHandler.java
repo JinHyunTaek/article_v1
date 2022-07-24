@@ -1,5 +1,6 @@
-package com.example.article.api;
+package com.example.article.api.handler;
 
+import com.example.article.api.ApiResult;
 import com.example.article.api.error.BasicException;
 import com.example.article.api.error.errorresponse.BasicErrorResponse;
 import com.example.article.api.error.errorresponse.SimpleErrorResponse;
@@ -21,7 +22,7 @@ import static com.example.article.api.error.BasicErrorCode.SIZE_NOT_MATCHED;
 
 @RestControllerAdvice("com.example.article.api")
 @Slf4j
-public class GlobalExceptionHandler {
+public class ApiExceptionHandler {
 
     @ExceptionHandler({BasicException.class})
     public ResponseEntity<ApiResult<BasicErrorResponse>> handleMemberException(BasicException e, HttpServletRequest request){

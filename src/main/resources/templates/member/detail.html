@@ -36,7 +36,7 @@
             <a href="" th:href="|@{/member/detail/{memberId}(memberId=${member.id})}|" th:text="작성글">작성글</a>
         </div>
         <div class="col-3">
-            <a href="" th:href="|@{/member/detail/{memberId}(memberId=${member.id},replies=true)}|" th:text="|댓글단 글|">reply</a>
+            <a href="" th:href="|@{/member/detail/{memberId}/replies(memberId=${member.id})}|" th:text="|댓글단 글|">reply</a>
         </div>
     </div>
     <hr>
@@ -50,35 +50,47 @@
         </tr> <!-- 가로줄 하나 -->
         </thead>
         <tbody>
-        <tr th:if="${isGetReplies==null}" th:each="article : ${articles}">
-            <td th:text="${article.id}"></td>
-            <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.id})}"
-            th:text="|${article.title}[${article.replies.size()}]|">title</a></td>
+        <tr th:each="article : ${articles}">
+            <td th:text="${article.articleId}"></td>
+            <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.articleId})}"
+                   th:text="|${article.title}[${article.replyCount}]|">title</a></td>
             <td th:text="${member.nickname}"></td>
             <td th:text="${article.hit}"></td>
-        </tr>
-        <tr th:if="${isGetReplies!=null}" th:each="r_article : ${r_articles}">
-            <td th:text="${r_article.id}"></td>
-            <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${r_article.id})}"
-                   th:text="|${r_article.title}[${r_article.replies.size()}]|">title</a></td>
-            <td th:text="${r_article.member.nickname}"></td>
-            <td th:text="${r_article.hit}"></td>
         </tr>
         </tbody>
     </table>
 
-    <a th:if="${startPage >= 10}" class="text-dark"
-       th:href="@{/member/detail/{memberId}(memberId=${member.id},page=${startPage-1})}">◀이전</a>
+    <div th:if="${forReplies}">
+        <a th:if="${startPage >= 10}" class="text-dark"
+           th:href="@{/member/detail/{memberId}/replies(memberId=${member.id},page=${startPage-1})}">◀이전</a>
 
-    <!--    th:class="${errors?.containsKey('itemNameError')} ? 'form-control field-error' : 'form-control'"-->
-    <div th:class="pagination" th:each="page : ${#numbers.sequence(startPage,endPage)}">
-        <a th:class="${page == currentPage} ? 'selected' : 'text-dark'"
-           th:href="@{/member/detail/{memberId}(memberId=${member.id},page=${page})}"
-           th:text="|[${page+1}]|"></a>
+        <!--    th:class="${errors?.containsKey('itemNameError')} ? 'form-control field-error' : 'form-control'"-->
+        <div th:class="pagination" th:each="page : ${#numbers.sequence(startPage,endPage)}">
+            <a th:class="${page == currentPage} ? 'selected' : 'text-dark'"
+               th:href="@{/member/detail/{memberId}/replies(memberId=${member.id},page=${page})}"
+               th:text="|[${page+1}]|"></a>
+        </div>
+
+        <a class="text-dark" th:if="${hasNext}"
+           th:href="@{/member/detail/{memberId}/replies(memberId=${member.id},page=${endPage+1})}"
+           th:text="|▶다음|">▶다음</a>
     </div>
 
-    <a class="text-dark" th:if="${hasNext}" th:href="@{/member/detail/{memberId}(memberId=${member.id},page=${endPage+1})}"
-       th:text="|▶다음|">▶다음</a>
+    <div th:unless="${forReplies}">
+        <a th:if="${startPage >= 10}" class="text-dark"
+           th:href="@{/member/detail/{memberId}(memberId=${member.id},page=${startPage-1})}">◀이전</a>
+
+        <!--    th:class="${errors?.containsKey('itemNameError')} ? 'form-control field-error' : 'form-control'"-->
+        <div th:class="pagination" th:each="page : ${#numbers.sequence(startPage,endPage)}">
+            <a th:class="${page == currentPage} ? 'selected' : 'text-dark'"
+               th:href="@{/member/detail/{memberId}(memberId=${member.id},page=${page})}"
+               th:text="|[${page+1}]|"></a>
+        </div>
+
+        <a class="text-dark" th:if="${hasNext}" th:href="@{/member/detail/{memberId}(memberId=${member.id},page=${endPage+1})}"
+           th:text="|▶다음|">▶다음</a>
+    </div>
+
     <hr>
 
     <div class="g-lg-4">

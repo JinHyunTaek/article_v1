@@ -21,6 +21,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = {"likes","member","replies"})
 public class Article extends BaseEntity{
 
     @Id @GeneratedValue(strategy = IDENTITY)
@@ -35,11 +36,9 @@ public class Article extends BaseEntity{
     @Column(columnDefinition = "TEXT")
     private String body;
 
-    @Setter
-    @Column(nullable = false, columnDefinition = "integer default 0")
-    private Integer likeNumber; //like 예약어래 야발...
+    @OneToMany(mappedBy = "article")
+    private List<Likes> likes = new ArrayList<>();
 
-    @Setter
     @Column(nullable = false, columnDefinition = "integer default 0")
     private Integer hit;
 
@@ -57,5 +56,19 @@ public class Article extends BaseEntity{
 
     public void addHitCount(){
         this.hit += 1;
+    }
+
+    public void setMember(Member member){
+        if(this.getMember()!=null){
+            member.getArticles().remove(this);
+        }
+        this.member = member;
+        member.getArticles().add(this);
+    }
+
+    public Article(String title, String body,Integer hit) {
+        this.title = title;
+        this.body = body;
+        this.hit = hit;
     }
 }

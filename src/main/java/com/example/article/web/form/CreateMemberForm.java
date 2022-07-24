@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 
 @Getter @Setter
 @AllArgsConstructor
@@ -30,6 +31,7 @@ public class CreateMemberForm {
                 .password(this.password)
                 .nickname(this.nickname)
                 .memberLevel(MemberLevel.NEW)
+                .articles(new ArrayList<>())
                 .build();
     }
 
@@ -39,6 +41,7 @@ public class CreateMemberForm {
                 .password(this.password)
                 .nickname(this.nickname)
                 .memberLevel(MemberLevel.ADMIN)
+                .articles(new ArrayList<>())
                 .build();
     }
 }

@@ -23,12 +23,14 @@ public class ReplyForm {
     @Size(min = 2)
     private String body;
 
-    public Reply toEntity(){
+    public Reply toEntity(Article article, Member member){
+        this.article = article;
+        this.member = member;
+
         return Reply.builder()
                 .article(this.article)
                 .member(this.member)
                 .body(this.body)
-                .likeNumber(0)
                 .build();
     }
 }

@@ -8,11 +8,8 @@ import com.example.article.api.dto.member.LoginMemberDto.LoginMemberRequest;
 import com.example.article.api.dto.member.LoginMemberDto.LoginMemberResponse;
 import com.example.article.api.dto.member.UpdateMemberDto.UpdateMemberRequest;
 import com.example.article.api.dto.member.UpdateMemberDto.UpdateMemberResponse;
-import com.example.article.api.error.BasicException;
 import com.example.article.api.service.MemberApiService;
-import com.example.article.domain.Member;
 import com.example.article.repository.MemberRepository;
-import com.example.article.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import static com.example.article.api.error.BasicErrorCode.NO_MEMBER_CONFIGURED;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
@@ -38,7 +34,6 @@ public class MemberApiController {
 
     private final MemberApiService memberApiService;
     private final MemberRepository memberRepository;
-    private final MemberService memberService;
 
     @PostMapping("/login")
     public ResponseEntity<ApiResult<LoginMemberResponse>> login(

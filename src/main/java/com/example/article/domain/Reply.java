@@ -32,7 +32,6 @@ public class Reply extends BaseEntity{
     @JoinColumn(name="member_id")
     private Member member;
 
-    private Integer likeNumber;
 
     @Column(columnDefinition = "TEXT")
     private String body;

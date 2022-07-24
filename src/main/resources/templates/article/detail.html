@@ -20,7 +20,7 @@
     </div>
     <div>
         <p>작성자: <a href="" th:href="@{/member/detail/{memberId}(memberId=${article.member.id})}"
-              th:text="|${article.member.nickname}|">작성자</a></p>
+                   th:text="|${article.member.nickname}|">작성자</a></p>
         <input type="hidden" id="nickname" name="nickname" class="form-control" th:value="${article.member.nickname}" readonly>
     </div>
     <div>
@@ -38,11 +38,20 @@
                     th:onclick="|location.href='@{/article/update/{articleId}(articleId=${article.id})}'|">수정</button>
         </div>
         <div th:if="${session.memberId == article.member.id}" class="col-lg-2">
-            <button class="btn btn-primary float-end text-dark"
-                    th:onclick="|location.href='@{/article/delete/{articleId}(articleId=${article.id})}'|">삭제</button>
+            <form th:action="@{/article/delete/{articleId}(articleId=${article.id})}" method="post">
+                <button class="btn btn-primary float-end text-dark" th:onclick="" type="submit"/>삭제
+            </form>
         </div>
     </div>
     <br>
+
+    <form th:action="@{/article/like/{articleId}(articleId=${article.id})}" method="post">
+        <button class="btn btn-primary float-end text-dark"
+                th:if="${likes == null}" th:text="|좋아요 ♥ 0|" type="submit"></button>
+        <button class="btn btn-primary float-end text-dark"
+                th:if="${likes != null}" th:text="|좋아요 ♥ ${likes}|" type="submit"></button>
+    </form>
+
     <p th:text="|작성일:${#temporals.format(article.createdDate, 'yyyy-MM-dd HH:mm')}|"></p>
     <div>
         <h4>댓글</h4>
@@ -54,9 +63,9 @@
         </div>
     </div>
     <div th:if="${session.memberId != null}">
-        <form action="/article/addReply" th:object="${reply}" method="post">
+        <form th:action="@{/article/addReply/{articleId}(articleId=${article.id})}" th:object="${reply}" method="post">
             <div>
-                <input type="hidden" class="form-control" th:name="articleId" th:value="${article.id}" />
+                <!--                <input type="hidden" class="form-control" th:name="articleId" th:value="${article.id}" />-->
                 <input type="text" id="replyBody" th:field="*{body}" class="form-control"
                        th:errorclass="field-error" placeholder="댓글을 남겨보세요.">
                 <div class="field-error" th:errors="*{body}" style="font-size: 15px;"/>

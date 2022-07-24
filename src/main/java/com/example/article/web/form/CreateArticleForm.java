@@ -30,13 +30,13 @@ public class CreateArticleForm {
     private ArticleCategory articleCategory;
 
     public Article toEntity(){
-        return Article.builder()
+        Article article = Article.builder()
                 .title(this.title)
-                .member(this.member)
                 .body(this.body)
                 .articleCategory(this.articleCategory)
+                .member(member)
                 .hit(0)
-                .likeNumber(0)
                 .build();
+        return article;
     }
 }

@@ -6,10 +6,13 @@
 <body>
 <div class="container" style="max-width: 600px">
     <div class="py-5 text-center">
-        <h2>404 오류 화면 스프링 부트 제공</h2>
+        <h2>404 오류 화면</h2>
     </div>
     <div>
-        <p>오류 화면 입니다.</p>
+        <p>
+        <div th:text="|메시지:${message}|"></div>
+        <div th:text="|url:${url}|"></div>
+        </p>
         <button class="btn btn-primary float-end"
                 th:onclick="|location.href='@{/}'|">목록으로</button>
     </div>

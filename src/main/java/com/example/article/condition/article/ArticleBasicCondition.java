@@ -1,4 +1,4 @@
-package com.example.article.condition;
+package com.example.article.condition.article;
 
 import lombok.Data;
 
@@ -6,11 +6,6 @@ import lombok.Data;
 public class ArticleBasicCondition {
     private String category;
     private Long memberId;
-
-    public ArticleBasicCondition(String category, Long memberId) {
-        this.category = category;
-        this.memberId = memberId;
-    }
 
     public ArticleBasicCondition(){}
 }

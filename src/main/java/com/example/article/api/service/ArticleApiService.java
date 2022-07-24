@@ -3,24 +3,20 @@ package com.example.article.api.service;
 import com.example.article.api.ApiResult;
 import com.example.article.api.dto.article.CreateArticleDto;
 import com.example.article.api.dto.article.GetArticleDto;
-import com.example.article.api.dto.article.UpdateArticleDto;
 import com.example.article.api.dto.article.UpdateArticleDto.UpdateArticleRequest;
 import com.example.article.api.dto.article.UpdateArticleDto.UpdateArticleResponse;
 import com.example.article.api.error.BasicErrorCode;
 import com.example.article.api.error.BasicException;
 import com.example.article.domain.Article;
 import com.example.article.domain.Member;
-import com.example.article.repository.ArticleRepository;
+import com.example.article.repository.article.ArticleRepository;
 import com.example.article.repository.MemberRepository;
 import com.example.article.repository.ReplyRepository;
-import com.example.article.web.projections.NicknameOnly;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static com.example.article.api.error.BasicErrorCode.NO_ARTICLE_CONFIGURED;
 import static com.example.article.api.error.BasicErrorCode.NO_MEMBER_CONFIGURED;
@@ -59,7 +55,6 @@ public class ArticleApiService {
                 .title(request.getTitle())
                 .body(request.getBody())
                 .articleCategory(request.getArticleCategory())
-                .likeNumber(0)
                 .hit(0)
                 .build();
 

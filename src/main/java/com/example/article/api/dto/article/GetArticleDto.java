@@ -30,8 +30,6 @@ public class GetArticleDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedDateTime;
 
-    private Integer likeNumber;
-
     private Integer hit;
 
     private Long memberId;
@@ -47,7 +45,6 @@ public class GetArticleDto {
                 .body(article.getBody())
                 .createdDateTime(article.getCreatedDate())
                 .modifiedDateTime(article.getLastModifiedDate())
-                .likeNumber(article.getLikeNumber())
                 .hit(article.getHit())
                 .memberId(article.getMember().getId())
                 .nickname(article.getMember().getNickname())
