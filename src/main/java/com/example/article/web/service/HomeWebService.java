@@ -1,8 +1,6 @@
 package com.example.article.web.service;
 
 import com.example.article.api.error.BasicException;
-import com.example.article.condition.article.ArticleSearchCondition;
-import com.example.article.domain.Article;
 import com.example.article.domain.ArticleCategory;
 import com.example.article.domain.Member;
 import com.example.article.repository.MemberRepository;
@@ -20,8 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.example.article.api.error.BasicErrorCode.NO_MEMBER_CONFIGURED;
-import static com.example.article.condition.article.ArticleSearchCondition.*;
-import static com.example.article.domain.ArticleCategory.NOTICE;
+import static com.example.article.condition.article.ArticleSearchCondition.ArticleSearchConditionValue;
 
 @Service
 @Transactional(readOnly = true)

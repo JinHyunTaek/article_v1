@@ -1,10 +1,6 @@
 package com.example.article.web.controller;
 
-import com.example.article.api.error.BasicException;
 import com.example.article.domain.Member;
-import com.example.article.repository.MemberRepository;
-import com.example.article.repository.ReplyRepository;
-import com.example.article.repository.article.ArticleRepository;
 import com.example.article.web.dto.SimpleArticleDto;
 import com.example.article.web.form.CreateMemberForm;
 import com.example.article.web.form.LoginForm;
@@ -28,7 +24,6 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.article.api.error.BasicErrorCode.NO_MEMBER_CONFIGURED;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Controller
