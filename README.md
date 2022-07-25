@@ -1,6 +1,6 @@
 # h2_article
  
- <h2>BackEnd developer who evoloves every day</h2>
+ <h2>BackEnd developer who evolves every day</h2>
  
  <p>💻Project Stack</p>
  <div>
