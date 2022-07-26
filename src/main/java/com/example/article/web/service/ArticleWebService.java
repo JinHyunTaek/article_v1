@@ -1,5 +1,6 @@
 package com.example.article.web.service;
 
+import com.example.article.api.error.BasicErrorCode;
 import com.example.article.api.error.BasicException;
 import com.example.article.condition.article.ArticleBasicCondition;
 import com.example.article.condition.article.ArticleSearchCondition;
@@ -19,11 +20,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.util.List;
 
-import static com.example.article.api.error.BasicErrorCode.NO_ARTICLE_CONFIGURED;
-import static com.example.article.api.error.BasicErrorCode.NO_MEMBER_CONFIGURED;
+import static com.example.article.api.error.BasicErrorCode.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -114,7 +115,6 @@ public class ArticleWebService {
     public Article setUpdateForm(Long articleId, ArticleUpdateForm updateForm) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
-
         updateForm.setMember(article.getMember());
         return article;
     }
@@ -149,6 +149,17 @@ public class ArticleWebService {
                                 .article(article)
                                 .build())
                 );
+    }
+
+    private void accessValidationBySession(Long memberId){
+        articleRepository.findByMemberId(memberId).ifPresentOrElse(
+                member -> {
+                    return;
+                },
+                () -> {
+                    System.out.println("memberId = " + memberId);
+                    throw new BasicException(FORBIDDEN);
+                });
     }
 
 }

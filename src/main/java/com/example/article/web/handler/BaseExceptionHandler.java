@@ -5,19 +5,14 @@ import com.example.article.api.error.errorresponse.BasicErrorResponse;
 import com.example.article.api.error.errorresponse.SimpleErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static com.example.article.api.error.BasicErrorCode.SIZE_NOT_MATCHED;
 
 @ControllerAdvice
 @Slf4j
@@ -28,14 +23,23 @@ public class BaseExceptionHandler {
         log.info("error code: {}, message: {}, url: {}",
                 e.getErrorCode(),e.getErrorMessage(),request.getRequestURI());
         BasicErrorResponse response = BasicErrorResponse.builder()
-                .memberErrorCode(e.getErrorCode().toString())
-                .memberErrorFields(List.of(e.getErrorField()))
+                .errorCode(e.getErrorCode().toString())
+                .errorFields(List.of(e.getErrorField()))
                 .errorMessage(e.getErrorMessage())
                 .build();
+        if(e.getErrorCode().getStatus() != null){
+            return new ModelAndView(
+                    "error/"+e.getErrorCode().getStatus(),
+                    Map.of(
+                            "errorCode",response.getErrorCode(),
+                            "message",response.getErrorMessage(),
+                            "status",e.getErrorCode().getStatus()
+                    ));
+        }
         return new ModelAndView(
                 "error/4xx",
                 Map.of(
-                      "code",response.getMemberErrorCode(),
+                      "errorCode",response.getErrorCode(),
                         "message",response.getErrorMessage()
                 ));
     }
