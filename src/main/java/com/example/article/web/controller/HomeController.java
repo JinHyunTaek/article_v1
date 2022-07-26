@@ -24,6 +24,7 @@ public class HomeController {
         }
 
         model.addAttribute("member", homeService.findById(memberId));
+
         return "loginHome";
     }
 
