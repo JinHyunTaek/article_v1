@@ -11,11 +11,11 @@ import java.util.List;
 @Builder
 public class BasicErrorResponse {
 
-    private List<String> memberErrorFields;
-    private String memberErrorCode;
+    private List<String> errorFields;
+    private String errorCode;
     private String errorMessage;
 
     public void addErrorField(String errorField){
-        memberErrorFields.add(errorField);
+        errorFields.add(errorField);
     }
 }

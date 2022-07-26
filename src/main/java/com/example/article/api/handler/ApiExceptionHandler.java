@@ -29,8 +29,8 @@ public class ApiExceptionHandler {
         log.info("error code: {}, message: {}, url: {}",
                 e.getErrorCode(),e.getErrorMessage(),request.getRequestURI());
         BasicErrorResponse response = BasicErrorResponse.builder()
-                .memberErrorCode(e.getErrorCode().toString())
-                .memberErrorFields(List.of(e.getErrorField()))
+                .errorCode(e.getErrorCode().toString())
+                .errorFields(List.of(e.getErrorField()))
                 .errorMessage(e.getErrorMessage())
                 .build();
         return ResponseEntity
@@ -53,8 +53,8 @@ public class ApiExceptionHandler {
         log.info("error fields: {}, message: {} url: {}",
                 e.getBindingResult().getFieldErrors(),e.getMessage(),request.getRequestURI());
         BasicErrorResponse response = BasicErrorResponse.builder()
-                .memberErrorCode(SIZE_NOT_MATCHED.toString())
-                .memberErrorFields((errorFields))
+                .errorCode(SIZE_NOT_MATCHED.toString())
+                .errorFields((errorFields))
                 .errorMessage(SIZE_NOT_MATCHED.getErrorMessage())
                 .build();
         return ResponseEntity

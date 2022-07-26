@@ -121,7 +121,9 @@ public class ArticleController {
     }
 
     @GetMapping("/update/{articleId}")
-    public String update(@PathVariable Long articleId,Model model){
+    public String update(@PathVariable Long articleId,
+                         @SessionAttribute(name = "memberId") Long memberId,
+                         Model model){
         articleService.setBaseArticleForm(articleId,model);
         return "article/updateForm";
     }

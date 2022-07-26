@@ -29,4 +29,5 @@ public interface ArticleRepository extends JpaRepository<Article,Long>, ArticleR
     @EntityGraph(attributePaths = {"member"})
     Optional<Article> findWithMemberById(Long articleId);
 
+    Optional<Article> findByMemberId(Long memberId);
 }
