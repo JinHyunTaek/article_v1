@@ -1,6 +1,5 @@
 package com.example.article.web.service;
 
-import com.example.article.api.error.BasicErrorCode;
 import com.example.article.api.error.BasicException;
 import com.example.article.condition.article.ArticleBasicCondition;
 import com.example.article.condition.article.ArticleSearchCondition;
@@ -10,9 +9,10 @@ import com.example.article.repository.MemberRepository;
 import com.example.article.repository.ReplyRepository;
 import com.example.article.repository.article.ArticleRepository;
 import com.example.article.web.dto.SimpleArticleDto;
-import com.example.article.web.form.ArticleUpdateForm;
-import com.example.article.web.form.CreateArticleForm;
 import com.example.article.web.form.ReplyForm;
+import com.example.article.web.form.UpdateForm;
+import com.example.article.web.form.article.CreateForm;
+import com.example.article.web.form.article.DetailForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,11 +20,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.util.List;
 
 import static com.example.article.api.error.BasicErrorCode.*;
+import static com.example.article.web.form.UpdateForm.toForm;
+import static com.example.article.web.form.article.DetailForm.toForm;
+import static com.example.article.web.form.article.DetailForm.toFormWithLikes;
 
 @Service
 @Transactional(readOnly = true)
@@ -57,24 +59,20 @@ public class ArticleWebService {
         return pagedArticles;
     }
 
-    public void setCreateArticleForm(Long memberId, Model model) {
+    public void setCreateArticleForm(Long memberId, CreateForm form) {
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new BasicException(NO_MEMBER_CONFIGURED)
         );
-
         MemberLevel memberLevel = member.getMemberLevel();
 
         List<ArticleCategory> articleCategories = ArticleCategory.filterCategoriesByMemberLevel(memberLevel);
-
-        model.addAttribute("articleCategories",articleCategories);
-        model.addAttribute("member",member);
+        form.setArticleCategories(articleCategories);
+        form.setMember(member);
     }
 
     @Transactional
-    public void save(Long memberId,CreateArticleForm createArticleForm) {
-        createArticleForm.setMember(memberRepository.findById(memberId)
-                .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED)));
-        Article article = createArticleForm.toEntity();
+    public void save(CreateForm createForm) {
+        Article article = createForm.toEntity();
         articleRepository.save(article);
     }
 
@@ -96,32 +94,38 @@ public class ArticleWebService {
         return article;
     }
 
-    public void setDetailForm(Long articleId, Model model, Long memberId) {
-        Article article = setBaseArticleForm(articleId, model);
-
+    public void setDetailForm(Long articleId, Long memberId,Model model) {
+        Article article = articleRepository.findWithMemberById(articleId)
+                .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
         if(memberId !=null) {
             article.addHitCount();
         }
 
-        likeRepository.findByArticleId(articleId).ifPresent(
-                likes -> model.addAttribute("likes",likes.size())
-        );
-
         List<Reply> replies = replyRepository.findWithMemberByArticleId(articleId);
 
-        model.addAttribute("replies",replies);
+        likeRepository.findByArticleId(articleId).ifPresentOrElse(
+                likes -> {
+                    DetailForm form= toFormWithLikes(article, replies,likes);
+                    model.addAttribute("article",form);
+                },
+                () -> {
+                    DetailForm form = toForm(article, replies);
+                    model.addAttribute("article",form);
+                }
+                );
     }
 
-    public Article setUpdateForm(Long articleId, ArticleUpdateForm updateForm) {
+    public UpdateForm setUpdateForm(Long articleId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
-        updateForm.setMember(article.getMember());
-        return article;
+        UpdateForm form = toForm(article);
+        return form;
     }
 
     @Transactional
-    public void update(Long articleId,ArticleUpdateForm updateForm) {
-        Article article = setUpdateForm(articleId, updateForm);
+    public void update(Long articleId, UpdateForm updateForm) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
         article.update(updateForm.getTitle(), updateForm.getBody());
     }
 

@@ -5,16 +5,16 @@ import com.example.article.domain.Member;
 import com.example.article.domain.Reply;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-@Getter
-@Setter
+@Getter @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class ReplyForm {
-
     private Member member;
 
     private Article article;

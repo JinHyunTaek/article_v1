@@ -23,7 +23,7 @@
             <p class="field-error" th:each="err : ${#fields.globalErrors()}"
                th:text="${err}">전체 오류 메세지</p>
         </div>
-        <div th:text="|작성자: ${article.member.nickname}|"></div>
+        <div th:text="|작성자: ${article.nickname}|"></div>
         <br>
         <div>
             <input type="hidden" id="id" th:field="*{id}" class="form-control"

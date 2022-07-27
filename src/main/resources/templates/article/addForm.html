@@ -18,17 +18,21 @@
     <div class="py-5 text-center">
         <h2>게시물 등록</h2>
     </div>
-    <div th:text="|작성자: ${member.nickname}|"/>
-    <br>
             <form action="" th:action th:object="${article}" method="post">
+                <div th:text="|작성자: *{member.nickname}|"/>
+                <br>
                 <div th:if="${#fields.hasGlobalErrors()}">
                     <p class="field-error" th:each="err : ${#fields.globalErrors()}"
                        th:text="${err}">전체 오류 메시지</p>
                 </div>
                 <div>
+                    <input type="hidden" id="member" th:field="*{member}" class="form-control"
+                           th:errorclass="field-error">
+                </div>
+                <div>
                     <select class="form-select" th:field="*{articleCategory}">
                         <option value="">게시판 선택</option>
-                        <option th:each="articleCategory : ${articleCategories}" th:value="${articleCategory.name()}"
+                        <option th:each="articleCategory : *{articleCategories}" th:value="${articleCategory.name()}"
                         th:text="${articleCategory.getDescription()}">none</option>
                     </select>
                     <div class="field-error" th:errors="*{articleCategory}" style="font-size: 15px;"/>

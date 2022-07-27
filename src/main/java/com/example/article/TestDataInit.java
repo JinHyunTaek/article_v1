@@ -5,7 +5,7 @@ import com.example.article.domain.ArticleCategory;
 import com.example.article.domain.Member;
 import com.example.article.repository.MemberRepository;
 import com.example.article.repository.article.ArticleRepository;
-import com.example.article.web.form.CreateArticleForm;
+import com.example.article.web.form.article.CreateForm;
 import com.example.article.web.form.CreateMemberForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
@@ -35,7 +35,7 @@ public class TestDataInit {
         memberRepository.save(member);
         memberRepository.save(member2);
 
-        CreateArticleForm articleDto = new CreateArticleForm("title1", member, "hello", ArticleCategory.FREE);
+        CreateForm articleDto = new CreateForm("title1", "hello", ArticleCategory.FREE,member,null);
 
         List<Member> members = new ArrayList<>();
         members.add(member);
@@ -52,8 +52,8 @@ public class TestDataInit {
         for (Member member : members) {
             for (ArticleCategory articleCategory : articleCategories) {
                 for (int i = 0; i < 60; i++) {
-                    CreateArticleForm articleForm = new CreateArticleForm(
-                            "test-title" + i+" "+articleCategory, member, "test-body", articleCategory
+                    CreateForm articleForm = new CreateForm(
+                            "test-title" + i+" "+articleCategory, "test-body", articleCategory,member,null
                     );
                     Article article = articleForm.toEntity();
                     articleRepository.save(article);

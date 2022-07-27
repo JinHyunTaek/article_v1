@@ -3,12 +3,11 @@ package com.example.article.web.controller;
 import com.example.article.condition.article.ArticleBasicCondition;
 import com.example.article.condition.article.ArticleSearchCondition;
 import com.example.article.condition.article.ArticleSearchCondition.ArticleSearchConditionValue;
-import com.example.article.domain.Article;
-import com.example.article.domain.Reply;
 import com.example.article.web.dto.SimpleArticleDto;
-import com.example.article.web.form.ArticleUpdateForm;
-import com.example.article.web.form.CreateArticleForm;
 import com.example.article.web.form.ReplyForm;
+import com.example.article.web.form.UpdateForm;
+import com.example.article.web.form.article.CreateForm;
+import com.example.article.web.form.article.DetailForm;
 import com.example.article.web.service.ArticleWebService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,31 +62,31 @@ public class ArticleController {
     }
 
     @GetMapping("/create")
-    public String createArticle(@ModelAttribute("article") Article article,
-                                @SessionAttribute(name = "memberId") Long memberId,Model model){
-        articleService.setCreateArticleForm(memberId, model);
+    public String createArticle(@ModelAttribute("article") CreateForm form,
+                                @SessionAttribute(name = "memberId") Long memberId){
+        articleService.setCreateArticleForm(memberId, form);
         return "article/addForm";
     }
 
     @PostMapping("/create")
-    public String create(@Validated @ModelAttribute("article") CreateArticleForm createArticleForm,
+    public String create(@Validated @ModelAttribute("article") CreateForm form,
                          BindingResult bindingResult,
-                         @SessionAttribute(name = "memberId") Long memberId, Model model){
+                         @SessionAttribute(name = "memberId") Long memberId){
 
         if(bindingResult.hasErrors()){
-            articleService.setCreateArticleForm(memberId,model);
+            articleService.setCreateArticleForm(memberId,form);
             log.info("errors={}",bindingResult);
             return "article/addForm";
         }
 
-        articleService.save(memberId,createArticleForm);
+        articleService.save(form);
 
         return "redirect:/";
     }
 
     @PostMapping("/addReply/{articleId}")
     public String createReply(@PathVariable Long articleId,
-                              @Validated @ModelAttribute("reply") ReplyForm replyForm,
+                              @Validated @ModelAttribute("replyForm") ReplyForm replyForm,
                               BindingResult bindingResult,
                               Model model, @SessionAttribute(name = "memberId") Long memberId,
                               RedirectAttributes redirectAttributes){
@@ -105,11 +104,12 @@ public class ArticleController {
     }
 
     @GetMapping("/detail/{articleId}")
-    public String articleDetail(@PathVariable Long articleId, Model model,
-                                @ModelAttribute("reply") Reply reply,
-                                @SessionAttribute(name = "memberId", required = false) Long memberId) {
+    public String articleDetail(@PathVariable Long articleId,
+                                @SessionAttribute(name = "memberId", required = false) Long memberId,
+                                @ModelAttribute("replyForm") ReplyForm replyForm,
+                                Model model) {
 
-        articleService.setDetailForm(articleId, model, memberId);
+        articleService.setDetailForm(articleId, memberId,model);
         return "article/detail";
     }
 
@@ -124,17 +124,18 @@ public class ArticleController {
     public String update(@PathVariable Long articleId,
                          @SessionAttribute(name = "memberId") Long memberId,
                          Model model){
-        articleService.setBaseArticleForm(articleId,model);
+        UpdateForm form = articleService.setUpdateForm(articleId);
+        model.addAttribute("article",form);
         return "article/updateForm";
     }
 
     @PostMapping("/update/{articleId}")
     public String update(@PathVariable Long articleId,
-                         @Valid @ModelAttribute("article") ArticleUpdateForm updateForm,
+                         @Valid @ModelAttribute("article") UpdateForm updateForm,
                          BindingResult bindingResult){
 
         if(bindingResult.hasErrors()){
-            articleService.setUpdateForm(articleId, updateForm);
+            articleService.setUpdateForm(articleId);
             log.info("errors={}",bindingResult);
             return "article/updateForm";
         }
