@@ -77,21 +77,14 @@ public class ArticleWebService {
     }
 
     @Transactional
-    public void saveReply(ReplyForm replyForm, Long memberId, Long articleId, Model model) {
+    public void saveReply(ReplyForm replyForm, Long memberId, Long articleId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED));
 
-        Article article = setBaseArticleForm(articleId, model);
-        Reply reply = replyForm.toEntity(article,member);
-        replyRepository.save(reply);
-    }
-
-    public Article setBaseArticleForm(Long articleId, Model model) {
         Article article = articleRepository.findWithMemberById(articleId)
                 .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
-
-        model.addAttribute("article",article);
-        return article;
+        Reply reply = replyForm.toEntity(article,member);
+        replyRepository.save(reply);
     }
 
     public void setDetailForm(Long articleId, Long memberId,Model model) {
@@ -155,8 +148,8 @@ public class ArticleWebService {
                 );
     }
 
-    private void accessValidationBySession(Long memberId){
-        articleRepository.findByMemberId(memberId).ifPresentOrElse(
+    public void accessValidationBySession(Long articleId, Long memberId){
+        articleRepository.findByIdAndMemberId(articleId,memberId).ifPresentOrElse(
                 member -> {
                     return;
                 },

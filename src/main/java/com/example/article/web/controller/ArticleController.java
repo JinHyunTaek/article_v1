@@ -92,12 +92,12 @@ public class ArticleController {
                               RedirectAttributes redirectAttributes){
 
         if(bindingResult.hasErrors()){
-            articleService.setBaseArticleForm(articleId, model);
+            articleService.setDetailForm(articleId,memberId,model);
             log.info("error={}",bindingResult);
             return "article/detail";
         }
 
-        articleService.saveReply(replyForm, memberId, articleId, model);
+        articleService.saveReply(replyForm, memberId, articleId);
 
         redirectAttributes.addAttribute("articleId",articleId);
         return "redirect:/article/detail/{articleId}";
@@ -125,6 +125,7 @@ public class ArticleController {
                          @SessionAttribute(name = "memberId") Long memberId,
                          Model model){
         UpdateForm form = articleService.setUpdateForm(articleId);
+        articleService.accessValidationBySession(articleId,memberId);
         model.addAttribute("article",form);
         return "article/updateForm";
     }

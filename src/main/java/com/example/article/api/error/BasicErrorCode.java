@@ -19,10 +19,10 @@ public enum BasicErrorCode {
 
     SIZE_NOT_MATCHED("size_not_matched","공백이거나 사이즈 오류"),
 
-    UNAUTHORIZED("access is denied to invalid credentials","자격 증명 안 됨",4001),
-    FORBIDDEN("you don't have permission to access","접근 권한이 없습니다",4003),
+    UNAUTHORIZED("access is denied to invalid credentials","자격 증명 안 됨",401),
+    FORBIDDEN("you don't have permission to access","접근 권한이 없습니다",403),
 
-    INTERNAL_SERVER_ERROR("server_error","서버 장애 발생",5000);
+    INTERNAL_SERVER_ERROR("server_error","서버 장애 발생",500);
 
     private final String errorField;
     private final String errorMessage;
