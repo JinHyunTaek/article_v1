@@ -7,7 +7,6 @@ import com.example.article.web.dto.SimpleArticleDto;
 import com.example.article.web.form.ReplyForm;
 import com.example.article.web.form.UpdateForm;
 import com.example.article.web.form.article.CreateForm;
-import com.example.article.web.form.article.DetailForm;
 import com.example.article.web.service.ArticleWebService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -79,7 +78,7 @@ public class ArticleController {
             return "article/addForm";
         }
 
-        articleService.save(form);
+        articleService.save(memberId,form);
 
         return "redirect:/";
     }

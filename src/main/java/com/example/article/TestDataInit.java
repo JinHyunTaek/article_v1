@@ -35,7 +35,7 @@ public class TestDataInit {
         memberRepository.save(member);
         memberRepository.save(member2);
 
-        CreateForm articleDto = new CreateForm("title1", "hello", ArticleCategory.FREE,member,null);
+        CreateForm articleDto = new CreateForm("title1", "hello", ArticleCategory.FREE,member,null,null);
 
         List<Member> members = new ArrayList<>();
         members.add(member);
@@ -53,7 +53,7 @@ public class TestDataInit {
             for (ArticleCategory articleCategory : articleCategories) {
                 for (int i = 0; i < 60; i++) {
                     CreateForm articleForm = new CreateForm(
-                            "test-title" + i+" "+articleCategory, "test-body", articleCategory,member,null
+                            "test-title" + i+" "+articleCategory, "test-body", articleCategory,member,null,null
                     );
                     Article article = articleForm.toEntity();
                     articleRepository.save(article);

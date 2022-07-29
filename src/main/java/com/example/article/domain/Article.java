@@ -39,15 +39,19 @@ public class Article extends BaseEntity{
     @OneToMany(mappedBy = "article")
     private List<Likes> likes = new ArrayList<>();
 
+    //orphanRemoval = true -> article delete 시에 orphanRemoval = true 설정된 테이블들 select 하는듯
+    @OneToMany(mappedBy = "article",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<File> files = new ArrayList<>();
+
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reply> replies = new ArrayList<>();
+
     @Column(nullable = false, columnDefinition = "integer default 0")
     private Integer hit;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name="member_id")
     private Member member;
-
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reply> replies = new ArrayList<>();
 
     public void update(String title, String body){
         this.title = title;
