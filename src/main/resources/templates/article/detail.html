@@ -11,6 +11,10 @@
             border-color: #dc3545;
             color: #dc3545;
         }
+        .body{
+        /* (각각 위 오른쪽 아래 왼쪽 - 시계방향) */
+        padding: 10px 1px 100px 1px;
+        }
     </style>
 </head>
 <body>
@@ -25,11 +29,18 @@
     </div>
     <div>
         <label for="title" th:text="|제목|">제목</label>
-        <input type="text" id="title" name="title" class="form-control" th:value="${article.title}" readonly>
+        <input type="text" id="title" name="title" class="form-control form-control-sm" th:value="${article.title}" readonly>
     </div>
     <div>
         <label for="body" th:text="|내용|">내용</label>
-        <input type="text" id="body" name="body" class="form-control" th:value="${article.body}" readonly>
+        <input type="text" id="body" name="body" style="white-space:pre"
+               class="form-control form-control-lg body" th:value="${article.body}"  readonly>
+    </div>
+    <br>
+    <div>
+        <img id="file" th:each="file : ${article.files}"
+             th:src="|/article/file/${file.getStoredFilename()}|" width="220" height="220"/>
+        <hr>
     </div>
     <br>
     <div class="row">
@@ -46,8 +57,8 @@
     <br>
 
     <form th:action="@{/article/like/{articleId}(articleId=${article.id})}" method="post">
-                <button class="btn btn-primary float-end text-dark"
-                        th:text="|좋아요 ♥ ${article.likeCount}|" type="submit"></button>
+        <button class="btn btn-primary float-end text-dark"
+                th:text="|좋아요 ♥ ${article.likeCount}|" type="submit"></button>
     </form>
 
     <p th:text="|작성일:${#temporals.format(article.createdDate, 'yyyy-MM-dd HH:mm')}|"></p>
@@ -65,7 +76,7 @@
             <div>
                 <input type="text" id="replyBody" th:field="*{body}" class="form-control"
                        th:errorclass="field-error" placeholder="댓글을 남겨보세요.">
-                <div class="field-error" th:errors="*{body}" style="font-size: 15px;"/>
+                <div class="field-error" th:errors="*{body}" style="font-size: 15px;"></div>
                 <button class="btn btn-primary float-end" type="submit">작성</button>
             </div>
         </form>

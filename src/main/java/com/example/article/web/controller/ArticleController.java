@@ -10,9 +10,12 @@ import com.example.article.web.form.article.CreateForm;
 import com.example.article.web.service.ArticleWebService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.net.MalformedURLException;
 import java.util.List;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -110,6 +114,12 @@ public class ArticleController {
 
         articleService.setDetailForm(articleId, memberId,model);
         return "article/detail";
+    }
+
+    @ResponseBody
+    @GetMapping("/file/{storedFilename}")
+    public Resource downloadFile(@PathVariable String storedFilename) throws MalformedURLException {
+        return new UrlResource("file:"+articleService.getFullPath(storedFilename));
     }
 
     @PostMapping("/like/{articleId}")

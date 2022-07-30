@@ -104,13 +104,15 @@ public class ArticleWebService {
 
         List<Reply> replies = replyRepository.findWithMemberByArticleId(articleId);
 
+        List<File> files = fileRepository.findByArticleId(articleId);
+
         likeRepository.findByArticleId(articleId).ifPresentOrElse(
                 likes -> {
-                    DetailForm form= toFormWithLikes(article, replies,likes);
+                    DetailForm form= toFormWithLikes(article, replies,files,likes);
                     model.addAttribute("article",form);
                 },
                 () -> {
-                    DetailForm form = toForm(article, replies);
+                    DetailForm form = toForm(article, replies,files);
                     model.addAttribute("article",form);
                 }
         );
@@ -194,12 +196,10 @@ public class ArticleWebService {
 
     @Transactional
     public void saveFiles(List<MultipartFile> multipartFiles, Article article) {
-        if(multipartFiles.isEmpty()){
-            return;
-        }
         List<File> storeFiles = new ArrayList<>();
 
         for (MultipartFile multipartFile : multipartFiles) {
+            if(multipartFile.isEmpty()) return;
             File file = saveFile(multipartFile, article);
             fileRepository.save(file);
             storeFiles.add(file);

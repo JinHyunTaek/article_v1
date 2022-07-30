@@ -31,11 +31,14 @@
         <p>
         <form action="/article/articles">
             <fieldset>
-                검색분류 <select name="selection">
-                <option th:each=" sel : ${selection}" th:text="${sel.getDescription()}" th:value="${sel.getField()}"/>
-            </select> <!-- select 태그 안에 옵션 값 존재 -->
-                검색어 <input type="text" name="searchValue">
-                <input type="submit" name="searchButton" value="검색">
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="select01">Options</label>
+                    <select class="form-select" id="select01" name="selection">검색 분류
+                        <option th:each=" sel : ${selection}" th:text="${sel.getDescription()}" th:value="${sel.getField()}"/>
+                    </select> <!-- select 태그 안에 옵션 값 존재 -->
+                    <input type="text" name="searchValue" placeholder="검색어를 입력해주세요">
+                    <input type="submit" name="searchButton" value="검색">
+                </div>
             </fieldset>
         </form>
         </p>

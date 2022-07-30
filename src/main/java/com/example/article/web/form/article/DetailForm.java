@@ -1,9 +1,6 @@
 package com.example.article.web.form.article;
 
-import com.example.article.domain.Article;
-import com.example.article.domain.Likes;
-import com.example.article.domain.Member;
-import com.example.article.domain.Reply;
+import com.example.article.domain.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,7 +30,9 @@ public class DetailForm {
 
     private List<Reply> replies;
 
-    public static DetailForm toForm(Article article,List<Reply> replies){
+    private List<File> files;
+
+    public static DetailForm toForm(Article article,List<Reply> replies,List<File> files){
         return DetailForm.builder()
                 .id(article.getId())
                 .title(article.getTitle())
@@ -41,10 +40,12 @@ public class DetailForm {
                 .createdDate(article.getCreatedDate())
                 .member(article.getMember())
                 .replies(replies)
+                .files(files)
                 .build();
     }
 
-    public static DetailForm toFormWithLikes(Article article, List<Reply> replies, List<Likes> likes){
+    public static DetailForm toFormWithLikes(Article article, List<Reply> replies,
+                                             List<File> files,List<Likes> likes){
         return DetailForm.builder()
                 .id(article.getId())
                 .title(article.getTitle())
@@ -53,6 +54,7 @@ public class DetailForm {
                 .likeCount(likes.size())
                 .member(article.getMember())
                 .replies(replies)
+                .files(files)
                 .build();
     }
 }

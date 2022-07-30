@@ -11,6 +11,9 @@
             border-color: #dc3545;
             color: #dc3545;
         }
+        .form-control{
+            display: inline;
+        }
     </style>
 </head>
 <body>
@@ -44,9 +47,9 @@
         </div>
         <div>
             <label for="body">*내용</label>
-            <input type="text" id="body" th:field="*{body}"
+            <textarea type="textarea" id="body" th:field="*{body}"
                    class="form-control" placeholder="내용을 입력하세요."
-                   th:errorclass="field-error">
+                      th:errorclass="field-error" rows="5">&#10;</textarea>
             <div class="field-error" th:errors="*{body}" style="font-size: 15px;"/>
         </div>
         <br>
