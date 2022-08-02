@@ -1,6 +1,6 @@
 package com.example.article.web.dto;
 
-import com.example.article.domain.ArticleCategory;
+import com.example.article.domain.nonentity.ArticleCategory;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.example.article.domain;
+package com.example.article.domain.nonentity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -4,6 +4,8 @@ import com.example.article.api.error.BasicException;
 import com.example.article.condition.article.ArticleBasicCondition;
 import com.example.article.condition.article.ArticleSearchCondition;
 import com.example.article.domain.*;
+import com.example.article.domain.nonentity.ArticleCategory;
+import com.example.article.domain.nonentity.MemberLevel;
 import com.example.article.repository.FileRepository;
 import com.example.article.repository.LikeRepository;
 import com.example.article.repository.MemberRepository;
@@ -85,22 +87,27 @@ public class ArticleWebService {
     }
 
     @Transactional
-    public void saveReply(ReplyForm replyForm, Long memberId, Long articleId) {
+    public void saveReply(ReplyForm replyForm, Long memberId, Long articleId, Long replyId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED));
 
         Article article = articleRepository.findWithMemberById(articleId)
                 .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
-        Reply reply = replyForm.toEntity(article,member);
-        replyRepository.save(reply);
+
+        if (replyId != null) {
+            Reply parent = replyRepository.findById(replyId).orElseThrow(
+                    () -> new BasicException(NO_REPLY_CONFIGURED));
+            Reply reply = replyForm.toEntityByParentReply(article, member, parent);
+            replyRepository.save(reply);
+        } else {
+            Reply reply = replyForm.toEntity(article, member);
+            replyRepository.save(reply);
+        }
     }
 
     public void setDetailForm(Long articleId, Long memberId,Model model) {
         Article article = articleRepository.findWithMemberById(articleId)
                 .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
-        if(memberId !=null) {
-            article.addHitCount();
-        }
 
         List<Reply> replies = replyRepository.findWithMemberByArticleId(articleId);
 

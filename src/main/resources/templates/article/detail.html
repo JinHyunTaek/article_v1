@@ -12,8 +12,8 @@
             color: #dc3545;
         }
         .body{
-        /* (각각 위 오른쪽 아래 왼쪽 - 시계방향) */
-        padding: 10px 1px 100px 1px;
+            /* (각각 위 오른쪽 아래 왼쪽 - 시계방향) */
+            padding: 10px 1px 100px 1px;
         }
     </style>
 </head>
@@ -67,12 +67,24 @@
         <hr style="border: 2px solid black;">
         <div th:each="reply : ${article.replies}">
             <p th:text="|작성자:*{reply.member.nickname}|" />
-            <p th:text="*{reply.body}" />
+            <p th:if="${reply.parent == null}" th:text="*{reply.body}" />
+            <p th:if="${reply.parent != null}" th:text="|&nbsp;&nbsp;&nbsp;&nbsp;*{reply.body}|" />
+            <form th:action="@{/article/addReply(articleId=${article.id},replyId=${reply.id})}"
+                  th:object="${replyForm}" method="post">
+                <div class="field-error" th:errors="*{body}" style="font-size: 15px;"></div>
+                <button class="btn btn-primary float-end" type="submit">작성</button>
+            </form>
             <hr>
         </div>
+        <form th:action="@{/article/addReply(articleId=${article.id},replyId=${reply.id})}"
+              th:object="${replyForm}" method="post">
+            <input type="text" class="form-control" th:placeholder="|답글을 남겨보세요.|">
+            <div class="field-error" th:errors="*{body}" style="font-size: 15px;"></div>
+            <button class="btn btn-primary float-end" type="submit">작성</button>
+        </form>
     </div>
     <div th:if="${session.memberId != null}">
-        <form th:action="@{/article/addReply/{articleId}(articleId=${article.id})}" th:object="${replyForm}" method="post">
+        <form th:action="@{/article/addReply(articleId=${article.id})}" th:object="${replyForm}" method="post">
             <div>
                 <input type="text" id="replyBody" th:field="*{body}" class="form-control"
                        th:errorclass="field-error" placeholder="댓글을 남겨보세요.">

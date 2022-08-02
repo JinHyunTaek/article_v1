@@ -2,7 +2,7 @@ package com.example.article.repository.article;
 
 import com.example.article.condition.article.ArticleBasicCondition;
 import com.example.article.condition.article.ArticleSearchCondition;
-import com.example.article.domain.ArticleCategory;
+import com.example.article.domain.nonentity.ArticleCategory;
 import com.example.article.domain.Reply;
 import com.example.article.web.dto.QSimpleArticleDto;
 import com.example.article.web.dto.SimpleArticleDto;
@@ -16,11 +16,8 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static com.example.article.domain.ArticleCategory.NOTICE;
 import static com.example.article.domain.QArticle.article;
 import static com.example.article.domain.QMember.member;
 import static com.example.article.domain.QReply.reply;

@@ -87,8 +87,9 @@ public class ArticleController {
         return "redirect:/";
     }
 
-    @PostMapping("/addReply/{articleId}")
-    public String createReply(@PathVariable Long articleId,
+    @PostMapping("/addReply")
+    public String createReply(@RequestParam Long articleId,
+                              @RequestParam(required = false) Long replyId,
                               @Validated @ModelAttribute("replyForm") ReplyForm replyForm,
                               BindingResult bindingResult,
                               Model model, @SessionAttribute(name = "memberId") Long memberId,
@@ -100,7 +101,7 @@ public class ArticleController {
             return "article/detail";
         }
 
-        articleService.saveReply(replyForm, memberId, articleId);
+        articleService.saveReply(replyForm, memberId, articleId,replyId);
 
         redirectAttributes.addAttribute("articleId",articleId);
         return "redirect:/article/detail/{articleId}";
@@ -133,8 +134,8 @@ public class ArticleController {
     public String update(@PathVariable Long articleId,
                          @SessionAttribute(name = "memberId") Long memberId,
                          Model model){
-        UpdateForm form = articleService.setUpdateForm(articleId);
         articleService.accessValidationBySession(articleId,memberId);
+        UpdateForm form = articleService.setUpdateForm(articleId);
         model.addAttribute("article",form);
         return "article/updateForm";
     }

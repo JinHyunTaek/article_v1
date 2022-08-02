@@ -1,9 +1,7 @@
 package com.example.article.jpaTest;
 
 import com.example.article.domain.Article;
-import com.example.article.domain.ArticleCategory;
 import com.example.article.domain.Member;
-import com.example.article.domain.MemberLevel;
 import com.example.article.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -21,11 +21,11 @@ public class Likes {
     private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "article")
+    @JoinColumn(name = "article_id")
     private Article article;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     public Likes(Article article, Member member) {

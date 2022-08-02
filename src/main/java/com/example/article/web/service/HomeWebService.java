@@ -1,7 +1,7 @@
 package com.example.article.web.service;
 
 import com.example.article.api.error.BasicException;
-import com.example.article.domain.ArticleCategory;
+import com.example.article.domain.nonentity.ArticleCategory;
 import com.example.article.domain.Member;
 import com.example.article.repository.MemberRepository;
 import com.example.article.repository.article.ArticleRepository;

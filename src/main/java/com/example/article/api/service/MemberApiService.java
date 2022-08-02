@@ -1,9 +1,7 @@
 package com.example.article.api.service;
 
 import com.example.article.api.ApiResult;
-import com.example.article.api.dto.member.CreateMemberDto;
 import com.example.article.api.dto.member.GetMemberDto;
-import com.example.article.api.dto.member.LoginMemberDto;
 import com.example.article.api.dto.member.LoginMemberDto.LoginMemberRequest;
 import com.example.article.api.dto.member.LoginMemberDto.LoginMemberResponse;
 import com.example.article.api.dto.member.UpdateMemberDto;
@@ -11,7 +9,7 @@ import com.example.article.api.dto.member.UpdateMemberDto.UpdateMemberResponse;
 import com.example.article.api.error.BasicErrorCode;
 import com.example.article.api.error.BasicException;
 import com.example.article.domain.Member;
-import com.example.article.domain.MemberLevel;
+import com.example.article.domain.nonentity.MemberLevel;
 import com.example.article.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

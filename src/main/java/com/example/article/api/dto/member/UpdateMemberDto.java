@@ -2,7 +2,7 @@ package com.example.article.api.dto.member;
 
 import com.example.article.api.ApiResult;
 import com.example.article.domain.Member;
-import com.example.article.domain.MemberLevel;
+import com.example.article.domain.nonentity.MemberLevel;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;

@@ -9,6 +9,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -32,8 +35,14 @@ public class Reply extends BaseEntity{
     @JoinColumn(name="member_id")
     private Member member;
 
-
     @Column(columnDefinition = "TEXT")
     private String body;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "parent_id")
+    private Reply parent;
+
+    @OneToMany(mappedBy = "parent",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Reply> children = new ArrayList<>();
 
 }

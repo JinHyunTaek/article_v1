@@ -15,6 +15,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReplyForm {
+
     private Member member;
 
     private Article article;
@@ -22,6 +23,8 @@ public class ReplyForm {
     @NotEmpty
     @Size(min = 2)
     private String body;
+
+    private Reply parent;
 
     public Reply toEntity(Article article, Member member){
         this.article = article;
@@ -31,6 +34,19 @@ public class ReplyForm {
                 .article(this.article)
                 .member(this.member)
                 .body(this.body)
+                .build();
+    }
+
+    public Reply toEntityByParentReply(Article article,Member member,Reply parent){
+        this.article = article;
+        this.member = member;
+        this.parent = parent;
+
+        return Reply.builder()
+                .article(this.article)
+                .member(this.member)
+                .body(this.body)
+                .parent(this.parent)
                 .build();
     }
 }

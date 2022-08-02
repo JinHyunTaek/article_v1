@@ -1,7 +1,7 @@
 package com.example.article.web.form.article;
 
 import com.example.article.domain.Article;
-import com.example.article.domain.ArticleCategory;
+import com.example.article.domain.nonentity.ArticleCategory;
 import com.example.article.domain.Member;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
