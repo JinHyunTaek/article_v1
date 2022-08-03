@@ -8,7 +8,9 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.lang.Nullable;
 
+import javax.persistence.OrderBy;
 import java.util.List;
 
 public interface ReplyRepository extends JpaRepository<Reply,Long> {
@@ -24,6 +26,10 @@ public interface ReplyRepository extends JpaRepository<Reply,Long> {
     @Query("select r from Reply r where r.article.id=:articleId")
     List<Reply> findByArticleId(@Param("articleId") Long articleId);
 
-    @EntityGraph(attributePaths = {"member"})
-    List<Reply> findWithMemberByArticleId(Long articleId);
+    @Query("select r from Reply r join fetch r.member m where " +
+            "r.article.id = :articleId and r.parent is null ")
+    List<Reply> findWithMemberByArticleId(@Param("articleId") Long articleId);
+
+    @Query("select r from Reply r join fetch r.member m where r.parent.id=:parentId")
+    List<Reply> findByParentId(@Param("parentId") Long parentId);
 }

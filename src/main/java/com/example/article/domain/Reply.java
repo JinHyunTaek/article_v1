@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Formula;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -44,5 +45,6 @@ public class Reply extends BaseEntity{
 
     @OneToMany(mappedBy = "parent",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Reply> children = new ArrayList<>();
+
 
 }

@@ -90,30 +90,31 @@ public class ArticleController {
     @PostMapping("/addReply")
     public String createReply(@RequestParam Long articleId,
                               @RequestParam(required = false) Long replyId,
+                              @RequestParam(name = "parentId", required = false) Long parentId,
                               @Validated @ModelAttribute("replyForm") ReplyForm replyForm,
                               BindingResult bindingResult,
                               Model model, @SessionAttribute(name = "memberId") Long memberId,
                               RedirectAttributes redirectAttributes){
 
         if(bindingResult.hasErrors()){
-            articleService.setDetailForm(articleId,memberId,model);
+            articleService.setDetailForm(articleId,model,parentId);
             log.info("error={}",bindingResult);
             return "article/detail";
         }
 
-        articleService.saveReply(replyForm, memberId, articleId,replyId);
+        articleService.saveReply(replyForm, memberId, articleId,parentId);
 
         redirectAttributes.addAttribute("articleId",articleId);
-        return "redirect:/article/detail/{articleId}";
+        return "redirect:/article/detail";
     }
 
-    @GetMapping("/detail/{articleId}")
-    public String articleDetail(@PathVariable Long articleId,
-                                @SessionAttribute(name = "memberId", required = false) Long memberId,
+    @GetMapping("/detail")
+    public String articleDetail(@RequestParam Long articleId,
+                                @RequestParam(required = false) Long parentId,
                                 @ModelAttribute("replyForm") ReplyForm replyForm,
                                 Model model) {
 
-        articleService.setDetailForm(articleId, memberId,model);
+        articleService.setDetailForm(articleId, model, parentId);
         return "article/detail";
     }
 

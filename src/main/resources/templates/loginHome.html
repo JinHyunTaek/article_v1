@@ -63,7 +63,7 @@
                 <tr th:each="article : ${articles}">
                     <div th:if="${article.articleCategory.name() eq 'GREET'}">
                         <td th:text="${article.articleId}"></td>
-                        <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.articleId})}"
+                        <td><a href="hello.html" th:href="@{/article/detail(articleId=${article.articleId})}"
                                th:text="|${article.title}[${article.replyCount}]|">title</a></td>
                         <td th:text="${article.nickname}"></td>
                         <td th:text="|${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm')}|"></td>
@@ -91,7 +91,7 @@
                 <tr th:each="article : ${articles}">
                     <div th:if="${article.articleCategory.name() eq 'FREE'}">
                         <td th:text="${article.articleId}"></td>
-                        <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.articleId})}"
+                        <td><a href="hello.html" th:href="@{/article/detail(articleId=${article.articleId})}"
                                th:text="|${article.title}[${article.replyCount}]|">title</a></td>
                         <td th:text="${article.nickname}"></td>
                         <td th:text="|${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm')}|"></td>
@@ -122,7 +122,7 @@
                 <tr th:each="article : ${articles}">
                     <div th:if="${article.articleCategory.name() eq 'MARKET'}">
                         <td th:text="${article.articleId}"></td>
-                        <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.articleId})}"
+                        <td><a href="hello.html" th:href="@{/article/detail(articleId=${article.articleId})}"
                                th:text="|${article.title}[${article.replyCount}]|" style="font-size: 15px">title</a></td>
                         <td th:text="${article.nickname}"></td>
                         <td th:text="|${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm')}|"></td>
@@ -150,7 +150,7 @@
                 <tr th:each="article : ${articles}">
                     <div th:if="${article.articleCategory.name() eq 'DEBATE'}">
                         <td th:text="${article.articleId}"></td>
-                        <td><a href="hello.html" th:href="@{/article/detail/{articleId}(articleId=${article.articleId})}"
+                        <td><a href="hello.html" th:href="@{/article/detail(articleId=${article.articleId})}"
                                th:text="|${article.title}[${article.replyCount}]|">title</a></td>
                         <td th:text="${article.nickname}"></td>
                         <td th:text="|${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm')}|"></td>

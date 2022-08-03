@@ -87,15 +87,15 @@ public class ArticleWebService {
     }
 
     @Transactional
-    public void saveReply(ReplyForm replyForm, Long memberId, Long articleId, Long replyId) {
+    public void saveReply(ReplyForm replyForm, Long memberId, Long articleId, Long parentId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED));
 
         Article article = articleRepository.findWithMemberById(articleId)
                 .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
 
-        if (replyId != null) {
-            Reply parent = replyRepository.findById(replyId).orElseThrow(
+        if (parentId != null) {
+            Reply parent = replyRepository.findById(parentId).orElseThrow(
                     () -> new BasicException(NO_REPLY_CONFIGURED));
             Reply reply = replyForm.toEntityByParentReply(article, member, parent);
             replyRepository.save(reply);
@@ -105,13 +105,20 @@ public class ArticleWebService {
         }
     }
 
-    public void setDetailForm(Long articleId, Long memberId,Model model) {
+    public void setDetailForm(Long articleId, Model model, Long parentId) {
         Article article = articleRepository.findWithMemberById(articleId)
                 .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
 
         List<Reply> replies = replyRepository.findWithMemberByArticleId(articleId);
 
         List<File> files = fileRepository.findByArticleId(articleId);
+
+        if(parentId != null){
+            System.out.println("parentId = " + parentId);
+            List<Reply> children = replyRepository.findByParentId(parentId);
+            System.out.println("children = " + children);
+            model.addAttribute("children",children);
+        }
 
         likeRepository.findByArticleId(articleId).ifPresentOrElse(
                 likes -> {
