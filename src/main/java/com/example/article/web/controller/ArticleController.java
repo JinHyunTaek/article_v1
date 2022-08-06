@@ -4,6 +4,7 @@ import com.example.article.condition.article.ArticleBasicCondition;
 import com.example.article.condition.article.ArticleSearchCondition;
 import com.example.article.condition.article.ArticleSearchCondition.ArticleSearchConditionValue;
 import com.example.article.web.dto.SimpleArticleDto;
+import com.example.article.web.dto.SimpleReplyDto;
 import com.example.article.web.form.ReplyForm;
 import com.example.article.web.form.UpdateForm;
 import com.example.article.web.form.article.CreateForm;
@@ -15,7 +16,6 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -60,7 +60,7 @@ public class ArticleController {
             pagedArticles = articleService.findByCategory(pageable, categoryParam, categoryCondition, model);
         }
 
-        setPagingCondition(model, pagedArticles);
+        setArticleSearchPageCond(model, pagedArticles);
         return "article/articles";
     }
 
@@ -88,16 +88,17 @@ public class ArticleController {
     }
 
     @PostMapping("/addReply")
-    public String createReply(@RequestParam Long articleId,
-                              @RequestParam(required = false) Long replyId,
-                              @RequestParam(name = "parentId", required = false) Long parentId,
-                              @Validated @ModelAttribute("replyForm") ReplyForm replyForm,
-                              BindingResult bindingResult,
-                              Model model, @SessionAttribute(name = "memberId") Long memberId,
-                              RedirectAttributes redirectAttributes){
+    public String createReply( @PageableDefault(sort = "id",direction = DESC) Pageable pageable,
+                               @RequestParam Long articleId,
+                               @RequestParam(required = false) Long replyId,
+                               @RequestParam(name = "parentId", required = false) Long parentId,
+                               @Validated @ModelAttribute("replyForm") ReplyForm replyForm,
+                               BindingResult bindingResult,
+                               Model model, @SessionAttribute(name = "memberId") Long memberId,
+                               RedirectAttributes redirectAttributes){
 
         if(bindingResult.hasErrors()){
-            articleService.setDetailForm(articleId,model,parentId);
+            articleService.setDetailForm(articleId,model,parentId,pageable);
             log.info("error={}",bindingResult);
             return "article/detail";
         }
@@ -109,12 +110,15 @@ public class ArticleController {
     }
 
     @GetMapping("/detail")
-    public String articleDetail(@RequestParam Long articleId,
-                                @RequestParam(required = false) Long parentId,
-                                @ModelAttribute("replyForm") ReplyForm replyForm,
-                                Model model) {
+    public String articleDetail( @PageableDefault(sort = "id",direction = DESC) Pageable pageable,
+                                 @RequestParam Long articleId,
+                                 @RequestParam(required = false) Long parentId,
+                                 @ModelAttribute("replyForm") ReplyForm replyForm,
+                                 Model model) {
 
-        articleService.setDetailForm(articleId, model, parentId);
+        Page<SimpleReplyDto> replies = articleService.
+                setDetailForm(articleId, model, parentId, pageable);
+        setReplyPageCond(model,replies);
         return "article/detail";
     }
 
@@ -162,7 +166,7 @@ public class ArticleController {
         return "redirect:/";
     }
 
-    private void setPagingCondition(Model model, Page<SimpleArticleDto> pagedArticles) {
+    private void setArticleSearchPageCond(Model model, Page<SimpleArticleDto> pagedArticles) {
         List<SimpleArticleDto> articles = pagedArticles.getContent();
 
         int currentPage = pagedArticles.getPageable().getPageNumber();
@@ -176,5 +180,20 @@ public class ArticleController {
 
         model.addAttribute("selection",List.of(ArticleSearchConditionValue.values()));
         model.addAttribute("articles",articles);
+    }
+
+    private void setReplyPageCond(Model model, Page<SimpleReplyDto> pagedReplies) {
+        List<SimpleReplyDto> replies = pagedReplies.getContent();
+
+        int currentPage = pagedReplies.getPageable().getPageNumber();
+        int endPage = Math.min((currentPage / 10) * 10 + 9, pagedReplies.getTotalPages());
+
+        model.addAttribute("currentPage",currentPage);
+        System.out.println("currentPage = " + currentPage);
+        model.addAttribute("hasPrevious",pagedReplies.hasPrevious());
+        model.addAttribute("hasNext", pagedReplies.hasNext());
+
+        model.addAttribute("replies",replies);
+
     }
 }

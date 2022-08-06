@@ -4,14 +4,15 @@ import com.example.article.api.error.BasicException;
 import com.example.article.condition.article.ArticleBasicCondition;
 import com.example.article.condition.article.ArticleSearchCondition;
 import com.example.article.domain.*;
-import com.example.article.domain.nonentity.ArticleCategory;
-import com.example.article.domain.nonentity.MemberLevel;
+import com.example.article.domain.constant.ArticleCategory;
+import com.example.article.domain.constant.MemberLevel;
 import com.example.article.repository.FileRepository;
 import com.example.article.repository.LikeRepository;
 import com.example.article.repository.MemberRepository;
 import com.example.article.repository.ReplyRepository;
 import com.example.article.repository.article.ArticleRepository;
 import com.example.article.web.dto.SimpleArticleDto;
+import com.example.article.web.dto.SimpleReplyDto;
 import com.example.article.web.form.ReplyForm;
 import com.example.article.web.form.UpdateForm;
 import com.example.article.web.form.article.CreateForm;
@@ -95,41 +96,47 @@ public class ArticleWebService {
                 .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
 
         if (parentId != null) {
-            Reply parent = replyRepository.findById(parentId).orElseThrow(
+            com.example.article.domain.Reply parent = replyRepository.findById(parentId).orElseThrow(
                     () -> new BasicException(NO_REPLY_CONFIGURED));
-            Reply reply = replyForm.toEntityByParentReply(article, member, parent);
+            com.example.article.domain.Reply reply = replyForm.toEntityByParentReply(article, member, parent);
             replyRepository.save(reply);
         } else {
-            Reply reply = replyForm.toEntity(article, member);
+            com.example.article.domain.Reply reply = replyForm.toEntity(article, member);
             replyRepository.save(reply);
         }
     }
 
-    public void setDetailForm(Long articleId, Model model, Long parentId) {
+    public Page<SimpleReplyDto> setDetailForm(Long articleId, Model model,
+                                              Long parentId,Pageable pageable) {
+
         Article article = articleRepository.findWithMemberById(articleId)
                 .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
 
-        List<Reply> replies = replyRepository.findWithMemberByArticleId(articleId);
+        Page<Reply> pagedReplies = replyRepository.findByArticleId(articleId, pageable);
+
+        Page<SimpleReplyDto> replies = pagedReplies.map(
+                reply -> SimpleReplyDto.toDto(reply)
+        );
 
         List<File> files = fileRepository.findByArticleId(articleId);
 
         if(parentId != null){
-            System.out.println("parentId = " + parentId);
-            List<Reply> children = replyRepository.findByParentId(parentId);
-            System.out.println("children = " + children);
+            List<com.example.article.domain.Reply> children = replyRepository.findByParentId(parentId);
             model.addAttribute("children",children);
+            model.addAttribute("parentId",parentId);
         }
 
         likeRepository.findByArticleId(articleId).ifPresentOrElse(
                 likes -> {
-                    DetailForm form= toFormWithLikes(article, replies,files,likes);
+                    DetailForm form= toFormWithLikes(article,files,likes);
                     model.addAttribute("article",form);
                 },
                 () -> {
-                    DetailForm form = toForm(article, replies,files);
+                    DetailForm form = toForm(article,files);
                     model.addAttribute("article",form);
                 }
         );
+        return replies;
     }
 
     public UpdateForm setUpdateForm(Long articleId) {

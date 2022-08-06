@@ -1,7 +1,7 @@
 package com.example.article.domain;
 
-import com.example.article.domain.nonentity.Address;
-import com.example.article.domain.nonentity.MemberLevel;
+import com.example.article.domain.constant.Address;
+import com.example.article.domain.constant.MemberLevel;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 

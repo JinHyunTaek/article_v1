@@ -1,7 +1,7 @@
 package com.example.article.web.form;
 
 import com.example.article.domain.Member;
-import com.example.article.domain.nonentity.MemberLevel;
+import com.example.article.domain.constant.MemberLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

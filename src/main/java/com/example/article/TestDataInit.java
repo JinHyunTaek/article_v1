@@ -1,7 +1,7 @@
 package com.example.article;
 
 import com.example.article.domain.Article;
-import com.example.article.domain.nonentity.ArticleCategory;
+import com.example.article.domain.constant.ArticleCategory;
 import com.example.article.domain.Member;
 import com.example.article.repository.MemberRepository;
 import com.example.article.repository.article.ArticleRepository;

@@ -9,7 +9,7 @@ import com.example.article.api.dto.member.UpdateMemberDto.UpdateMemberResponse;
 import com.example.article.api.error.BasicErrorCode;
 import com.example.article.api.error.BasicException;
 import com.example.article.domain.Member;
-import com.example.article.domain.nonentity.MemberLevel;
+import com.example.article.domain.constant.MemberLevel;
 import com.example.article.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

@@ -2,7 +2,7 @@ package com.example.article.api.dto.member;
 
 import com.example.article.api.ApiResult;
 import com.example.article.domain.Member;
-import com.example.article.domain.nonentity.MemberLevel;
+import com.example.article.domain.constant.MemberLevel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 

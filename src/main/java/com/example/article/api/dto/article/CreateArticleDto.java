@@ -2,7 +2,7 @@ package com.example.article.api.dto.article;
 
 
 import com.example.article.domain.Article;
-import com.example.article.domain.nonentity.ArticleCategory;
+import com.example.article.domain.constant.ArticleCategory;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 

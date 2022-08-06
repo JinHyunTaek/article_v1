@@ -1,6 +1,6 @@
 package com.example.article.domain;
 
-import com.example.article.domain.nonentity.ArticleCategory;
+import com.example.article.domain.constant.ArticleCategory;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 

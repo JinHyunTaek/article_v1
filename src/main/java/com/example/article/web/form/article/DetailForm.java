@@ -32,20 +32,18 @@ public class DetailForm {
 
     private List<File> files;
 
-    public static DetailForm toForm(Article article,List<Reply> replies,List<File> files){
+    public static DetailForm toForm(Article article,List<File> files){
         return DetailForm.builder()
                 .id(article.getId())
                 .title(article.getTitle())
                 .body(article.getBody())
                 .createdDate(article.getCreatedDate())
                 .member(article.getMember())
-                .replies(replies)
                 .files(files)
                 .build();
     }
 
-    public static DetailForm toFormWithLikes(Article article, List<Reply> replies,
-                                             List<File> files,List<Likes> likes){
+    public static DetailForm toFormWithLikes(Article article, List<File> files,List<Likes> likes){
         return DetailForm.builder()
                 .id(article.getId())
                 .title(article.getTitle())
@@ -53,7 +51,6 @@ public class DetailForm {
                 .createdDate(article.getCreatedDate())
                 .likeCount(likes.size())
                 .member(article.getMember())
-                .replies(replies)
                 .files(files)
                 .build();
     }

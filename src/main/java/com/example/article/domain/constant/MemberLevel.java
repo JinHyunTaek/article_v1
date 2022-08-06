@@ -1,4 +1,4 @@
-package com.example.article.domain.nonentity;
+package com.example.article.domain.constant;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

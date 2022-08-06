@@ -66,16 +66,17 @@
     <div>
         <h4>댓글</h4>
         <hr style="border: 2px solid black;">
-        <div th:each="reply : ${article.replies}">
-            <p th:text="|작성자:*{reply.member.nickname}|" />
+        <div th:each="reply : ${replies}">
+            <p th:text="|작성자:*{reply.nickname}|" />
             <p th:text="${reply.body}" />
-            <a href="" th:href="@{/article/detail(articleId=${article.id},parentId=${reply.id})}" style="font-size: 13px;">
-                <i class="fa-solid fa-comments"></i></a>
+            <a href="" th:href="@{/article/detail(articleId=${article.id},parentId=${reply.id})}"
+               style="font-size: 13px;"><i class="fa-solid fa-comments"></i></a>
+            <hr>
             <div th:if="${children != null}">
                 <form th:action="@{/article/addReply(articleId=${article.id},parentId=${reply.id})}"
                       th:object="${replyForm}" method="post">
-                    <input type="text" id="child" th:field="*{body}" class="form-control"
-                           th:errorclass="field-error" placeholder="답글을 남겨보세요.">
+                    <input th:if="${parentId==reply.id}" type="text" id="child" th:field="*{body}"
+                           class="form-control" th:errorclass="field-error" placeholder="답글을 남겨보세요.">
                     <div class="field-error" th:errors="*{body}" style="font-size: 15px;"></div>
                     <button class="btn btn-primary float-end" type="submit">작성</button>
                 </form>
@@ -88,6 +89,12 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div>
+            <a th:if="${hasPrevious}" th:href="@{/article/detail(page=${currentPage-1},articleId=${article.id})}"
+               th:text="|◀이전 댓글|">123</a>
+            <a th:if="${hasNext}" th:href="@{/article/detail(page=${currentPage+1},articleId=${article.id})}"
+               th:text="|▶더보기|">123</a>
         </div>
         <hr>
     </div>
