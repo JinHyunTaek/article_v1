@@ -28,7 +28,8 @@ public interface ReplyRepository extends JpaRepository<com.example.article.domai
     @Query("select r from Reply r join fetch r.member m where r.parent.id=:parentId")
     List<Reply> findByParentId(@Param("parentId") Long parentId);
 
-    @Query(value = "select r from Reply r join fetch r.member m where r.parent is null",
+    @Query(value = "select r from Reply r join fetch r.member m where r.article.id=:articleId " +
+            "and r.parent is null",
     countQuery = "select count(r.id) from Reply r where r.parent is null")
     Page<Reply> findByArticleId(@Param("articleId") Long articleId, Pageable pageable);
 

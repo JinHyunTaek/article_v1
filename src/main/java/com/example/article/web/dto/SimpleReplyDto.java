@@ -22,6 +22,8 @@ public class SimpleReplyDto {
 
     private LocalDateTime createdDate;
 
+    private Long parentId;
+
     public static SimpleReplyDto toDto(Reply reply){
         return SimpleReplyDto.builder()
                 .id(reply.getId())
@@ -31,11 +33,22 @@ public class SimpleReplyDto {
                 .build();
     }
 
-    public SimpleReplyDto(Long id, String body, String nickname, LocalDateTime createdDate) {
+    public static SimpleReplyDto toDtoWithParent(Reply reply){
+        return SimpleReplyDto.builder()
+                .id(reply.getId())
+                .body(reply.getBody())
+                .nickname(reply.getMember().getNickname())
+                .createdDate(reply.getCreatedDate())
+                .parentId(reply.getParent().getId())
+                .build();
+    }
+
+    protected SimpleReplyDto(Long id, String body, String nickname,
+                             LocalDateTime createdDate, Long parentId) {
         this.id = id;
         this.body = body;
         this.nickname = nickname;
         this.createdDate = createdDate;
+        this.parentId = parentId;
     }
-
 }

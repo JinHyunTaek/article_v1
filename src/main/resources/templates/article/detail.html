@@ -39,7 +39,7 @@
     </div>
     <br>
     <div>
-        <img id="file" th:each="file : ${article.files}"
+        <img id="file" class="img-thumbnail" th:each="file : ${article.files}"
              th:src="|/article/file/${file.getStoredFilename()}|" width="220" height="220"/>
         <hr>
     </div>
@@ -65,31 +65,34 @@
     <p th:text="|작성일:${#temporals.format(article.createdDate, 'yyyy-MM-dd HH:mm')}|"></p>
     <div>
         <h4>댓글</h4>
-        <hr style="border: 2px solid black;">
         <div th:each="reply : ${replies}">
+
+            <hr class="border border-danger border-2 opacity-50">
             <p th:text="|작성자:*{reply.nickname}|" />
             <p th:text="${reply.body}" />
             <a href="" th:href="@{/article/detail(articleId=${article.id},parentId=${reply.id})}"
                style="font-size: 13px;"><i class="fa-solid fa-comments"></i></a>
-            <hr>
-            <div th:if="${children != null}">
+            <div th:if="${article.children != null}">
                 <form th:action="@{/article/addReply(articleId=${article.id},parentId=${reply.id})}"
                       th:object="${replyForm}" method="post">
-                    <input th:if="${parentId==reply.id}" type="text" id="child" th:field="*{body}"
-                           class="form-control" th:errorclass="field-error" placeholder="답글을 남겨보세요.">
-                    <div class="field-error" th:errors="*{body}" style="font-size: 15px;"></div>
-                    <button class="btn btn-primary float-end" type="submit">작성</button>
+                    <div th:if="${parentId==reply.id}">
+                        <input type="text" id="child" th:field="*{body}" class="form-control"
+                               th:errorclass="field-error" th:placeholder="|${reply.nickname}님의 댓글에 답글을 남겨보세요.|">
+                        <div class="field-error" th:errors="*{body}" style="font-size: 15px;"></div>
+                        <button class="btn btn-primary float-end" type="submit">작성</button>
+                    </div>
                 </form>
-                <div th:each="child: ${children}">
-                    <div th:if="${child.parent.id eq reply.id}">
-                        <p th:text="|  답글 작성자:*{child.member.nickname}|" />
-                        <p th:text="${child.body}" />
-                        <p th:text="${child.parent.id}" />
+                <div th:each="child: ${article.children}">
+                    <div th:if="${child.parentId eq reply.id}">
                         <hr>
+                        <p th:text="|&nbsp;&nbsp;답글 작성자:*{child.nickname}|" />
+                        <p th:text="|&nbsp;&nbsp;${child.body}|" />
                     </div>
                 </div>
             </div>
+
         </div>
+
         <div>
             <a th:if="${hasPrevious}" th:href="@{/article/detail(page=${currentPage-1},articleId=${article.id})}"
                th:text="|◀이전 댓글|">123</a>
@@ -98,6 +101,7 @@
         </div>
         <hr>
     </div>
+
     <div th:if="${session.memberId != null}">
         <form th:action="@{/article/addReply(articleId=${article.id})}" th:object="${replyForm}" method="post">
             <div>

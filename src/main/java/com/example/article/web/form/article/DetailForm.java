@@ -1,15 +1,18 @@
 package com.example.article.web.form.article;
 
-import com.example.article.domain.*;
+import com.example.article.domain.Article;
+import com.example.article.domain.File;
+import com.example.article.domain.Member;
+import com.example.article.domain.Reply;
+import com.example.article.web.dto.SimpleReplyDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Getter @Setter
 @Builder
@@ -32,7 +35,13 @@ public class DetailForm {
 
     private List<File> files;
 
-    public static DetailForm toForm(Article article,List<File> files){
+    private List<SimpleReplyDto> children;
+
+    public static DetailForm toFormWithChildren(Article article,
+                                                List<File> files,
+                                                Optional<Integer> likeCount,
+                                                List<SimpleReplyDto> children)
+    {
         return DetailForm.builder()
                 .id(article.getId())
                 .title(article.getTitle())
@@ -40,18 +49,30 @@ public class DetailForm {
                 .createdDate(article.getCreatedDate())
                 .member(article.getMember())
                 .files(files)
+                .likeCount(checkLikeCount(likeCount))
+                .children(children)
                 .build();
     }
 
-    public static DetailForm toFormWithLikes(Article article, List<File> files,List<Likes> likes){
+    public static DetailForm toForm(Article article,
+                                    List<File> files,
+                                    Optional<Integer> likeCount)
+    {
         return DetailForm.builder()
                 .id(article.getId())
                 .title(article.getTitle())
                 .body(article.getBody())
                 .createdDate(article.getCreatedDate())
-                .likeCount(likes.size())
                 .member(article.getMember())
                 .files(files)
+                .likeCount(checkLikeCount(likeCount))
                 .build();
+    }
+
+    public static Integer checkLikeCount(Optional<Integer> likeCount){
+        if(likeCount.isPresent()){
+            return likeCount.get();
+        }
+        return 0;
     }
 }

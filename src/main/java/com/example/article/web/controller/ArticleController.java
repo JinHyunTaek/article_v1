@@ -98,7 +98,9 @@ public class ArticleController {
                                RedirectAttributes redirectAttributes){
 
         if(bindingResult.hasErrors()){
-            articleService.setDetailForm(articleId,model,parentId,pageable);
+            Page<SimpleReplyDto> replies =
+                    articleService.setDetailForm(articleId, model, parentId, pageable);
+            setReplyPageCond(model,replies);
             log.info("error={}",bindingResult);
             return "article/detail";
         }
@@ -130,9 +132,11 @@ public class ArticleController {
 
     @PostMapping("/like/{articleId}")
     public String addLikeCount(@PathVariable Long articleId,
-                               @SessionAttribute(name = "memberId") Long memberId) {
+                               @SessionAttribute(name = "memberId") Long memberId,
+                               RedirectAttributes redirectAttributes) {
         articleService.saveLikes(articleId, memberId);
-        return "redirect:/article/detail/{articleId}";
+        redirectAttributes.addAttribute("articleId",articleId);
+        return "redirect:/article/detail";
     }
 
     @GetMapping("/update/{articleId}")
@@ -148,7 +152,10 @@ public class ArticleController {
     @PostMapping("/update/{articleId}")
     public String update(@PathVariable Long articleId,
                          @Valid @ModelAttribute("article") UpdateForm updateForm,
-                         BindingResult bindingResult){
+                         BindingResult bindingResult,
+                         RedirectAttributes redirectAttributes){
+
+        redirectAttributes.addAttribute("articleId",articleId);
 
         if(bindingResult.hasErrors()){
             articleService.setUpdateForm(articleId);
@@ -157,7 +164,7 @@ public class ArticleController {
         }
 
         articleService.update(articleId,updateForm);
-        return "redirect:/article/detail/{articleId}";
+        return "redirect:/article/detail";
     }
 
     @PostMapping("/delete/{articleId}")

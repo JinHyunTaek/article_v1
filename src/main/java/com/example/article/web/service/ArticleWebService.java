@@ -30,12 +30,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.example.article.api.error.BasicErrorCode.*;
 import static com.example.article.web.form.UpdateForm.toForm;
+import static com.example.article.web.form.article.DetailForm.*;
 import static com.example.article.web.form.article.DetailForm.toForm;
-import static com.example.article.web.form.article.DetailForm.toFormWithLikes;
 
 @Service
 @Transactional(readOnly = true)
@@ -96,9 +98,9 @@ public class ArticleWebService {
                 .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
 
         if (parentId != null) {
-            com.example.article.domain.Reply parent = replyRepository.findById(parentId).orElseThrow(
+            Reply parent = replyRepository.findById(parentId).orElseThrow(
                     () -> new BasicException(NO_REPLY_CONFIGURED));
-            com.example.article.domain.Reply reply = replyForm.toEntityByParentReply(article, member, parent);
+            Reply reply = replyForm.toEntityByParentReply(article, member, parent);
             replyRepository.save(reply);
         } else {
             com.example.article.domain.Reply reply = replyForm.toEntity(article, member);
@@ -114,28 +116,25 @@ public class ArticleWebService {
 
         Page<Reply> pagedReplies = replyRepository.findByArticleId(articleId, pageable);
 
-        Page<SimpleReplyDto> replies = pagedReplies.map(
-                reply -> SimpleReplyDto.toDto(reply)
-        );
+        Page<SimpleReplyDto> replies = pagedReplies.map(SimpleReplyDto::toDto);
 
         List<File> files = fileRepository.findByArticleId(articleId);
 
+        Optional<Integer> likeCount = likeRepository.countByArticleId(articleId);
+
         if(parentId != null){
-            List<com.example.article.domain.Reply> children = replyRepository.findByParentId(parentId);
-            model.addAttribute("children",children);
+            List<Reply> children = replyRepository.findByParentId(parentId);
+            List<SimpleReplyDto> childrenDto = children.stream()
+                    .map(SimpleReplyDto::toDtoWithParent).collect(Collectors.toList());
+            DetailForm form = toFormWithChildren(article, files, likeCount, childrenDto);
+            model.addAttribute("article",form);
             model.addAttribute("parentId",parentId);
+            return replies;
         }
 
-        likeRepository.findByArticleId(articleId).ifPresentOrElse(
-                likes -> {
-                    DetailForm form= toFormWithLikes(article,files,likes);
-                    model.addAttribute("article",form);
-                },
-                () -> {
-                    DetailForm form = toForm(article,files);
-                    model.addAttribute("article",form);
-                }
-        );
+        DetailForm form = toForm(article, files, likeCount);
+        model.addAttribute("article",form);
+
         return replies;
     }
 
