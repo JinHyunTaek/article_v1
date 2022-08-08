@@ -41,6 +41,13 @@
                    th:errorclass="field-error">
             <div class="field-error" th:errors="*{body}" style="font-size: 15px;"></div>
         </div>
+        <span th:each="image : *{images}">
+            <div th:text="|${image.originalFilename} (사진 선택시 삭제)|"></div>
+            <img id="image"
+                 th:src="|/article/file/${image.getStoredFilename()}|" width="300" height="300"/>
+            <input type="checkbox" name="storedFilenames"
+                   th:value="${image.storedFilename}" th:checked="false" />
+        </span>
         <hr class="my-4">
         <div class="row">
             <div class="col">
@@ -48,7 +55,7 @@
             </div>
             <div class="col">
                 <button class="w-100 btn btn-secondary btn-lg"
-                        th:onclick="|location.href='@{/article/detail/{articleId}(articleId=${article.id})}'|"
+                        th:onclick="|location.href='@{/article/detail/(articleId=${article.id})}'|"
                         type="button">취소</button>
             </div>
         </div>

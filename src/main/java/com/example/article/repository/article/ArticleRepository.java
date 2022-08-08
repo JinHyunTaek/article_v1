@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,4 +31,6 @@ public interface ArticleRepository extends JpaRepository<Article,Long>, ArticleR
     Optional<Article> findWithMemberById(Long articleId);
 
     Optional<Article> findByIdAndMemberId(Long articleId, Long memberId);
+
+    Optional<Article> findByTitle(String title);
 }

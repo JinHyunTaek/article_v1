@@ -32,7 +32,7 @@ public class CreateForm {
 
     private List<ArticleCategory> articleCategories;
 
-    private List<MultipartFile> multipartFiles;
+    private List<MultipartFile> imageFiles;
 
     public Article toEntity(){
         Article article = Article.builder()

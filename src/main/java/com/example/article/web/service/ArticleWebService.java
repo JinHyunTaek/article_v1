@@ -141,22 +141,29 @@ public class ArticleWebService {
     public UpdateForm setUpdateForm(Long articleId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
-        UpdateForm form = toForm(article);
+        List<File> files = fileRepository.findByArticleId(articleId);
+        UpdateForm form = toForm(article,files);
         return form;
     }
 
     @Transactional
-    public void update(Long articleId, UpdateForm updateForm) {
+    public void update(Long articleId, UpdateForm updateForm,List<String> storedFilenames) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
         article.update(updateForm.getTitle(), updateForm.getBody());
+        if(storedFilenames != null)
+            for (String storedFilename : storedFilenames) {
+                fileRepository.deleteByStoredFilename(storedFilename);
+                java.io.File io_file = new java.io.File(getFullPath(storedFilename));
+                io_file.delete();
+            }
+
     }
 
     @Transactional
     public void delete(Long articleId) {
         List<File> files = fileRepository.findByArticleId(articleId);
         if(files.isEmpty()) {
-            System.out.println("file is empty");
             articleRepository.deleteById(articleId);
             return;
         }
@@ -168,7 +175,6 @@ public class ArticleWebService {
         for (File file : files) {
             String storedFilename = file.getStoredFilename();
             java.io.File io_file = new java.io.File(getFullPath(storedFilename));
-            System.out.println(getFullPath(storedFilename));
             io_file.delete();
         }
     }
@@ -211,7 +217,7 @@ public class ArticleWebService {
                 .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED)));
         Article article = form.toEntity();
         articleRepository.save(article);
-        saveFiles(form.getMultipartFiles(),article);
+        saveFiles(form.getImageFiles(),article);
     }
 
     @Transactional
