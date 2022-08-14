@@ -18,7 +18,7 @@
     <div class="py-5 text-center">
         <h2>게시물 수정</h2>
     </div>
-    <form th:action th:object="${article}" method="post">
+    <form th:action th:object="${article}" method="post", enctype="multipart/form-data">
         <div th:if="${#fields.hasGlobalErrors()}">
             <p class="field-error" th:each="err : ${#fields.globalErrors()}"
                th:text="${err}">전체 오류 메세지</p>
@@ -46,8 +46,13 @@
             <img id="image"
                  th:src="|/article/file/${image.getStoredFilename()}|" width="300" height="300"/>
             <input type="checkbox" name="storedFilenames"
-                   th:value="${image.storedFilename}" th:checked="false" />
+                   th:value="${image.storedFilename}" th:checked="false">
         </span>
+        <div>
+            <hr>
+            <lable for="file" style="font-size: 15px">새로 추가할 첨부 파일 또는 이미지 선택</lable>
+            <input type="file" multiple="multiple" name="newImages">
+        </div>
         <hr class="my-4">
         <div class="row">
             <div class="col">

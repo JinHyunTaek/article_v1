@@ -40,7 +40,7 @@
                         <option th:each=" sel : ${selection}" th:text="${sel.getDescription()}" th:value="${sel.getField()}"/>
                     </select> <!-- select 태그 안에 옵션 값 존재 -->
                     <input type="text" name="searchValue" placeholder="검색어를 입력해주세요">
-                    <input type="submit" name="searchButton" value="검색">
+                    <input type="submit" value="검색">
                 </div>
             </fieldset>
         </fieldset>

@@ -153,7 +153,7 @@ public class ArticleController {
     public String update(@PathVariable Long articleId,
                          @Valid @ModelAttribute("article") UpdateForm updateForm,
                          BindingResult bindingResult,
-                         @RequestParam("storedFilenames") List<String> storedFilenames,
+                         @RequestParam(name = "storedFilenames",required = false) List<String> storedFilenames,
                          RedirectAttributes redirectAttributes){
 
         redirectAttributes.addAttribute("articleId",articleId);

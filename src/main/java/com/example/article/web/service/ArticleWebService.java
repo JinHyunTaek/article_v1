@@ -151,6 +151,10 @@ public class ArticleWebService {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
         article.update(updateForm.getTitle(), updateForm.getBody());
+        if(updateForm.getNewImages()!=null){
+            System.out.println("updateForm = " + updateForm.getNewImages());
+            saveFiles(updateForm.getNewImages(),article);
+        }
         if(storedFilenames != null)
             for (String storedFilename : storedFilenames) {
                 fileRepository.deleteByStoredFilename(storedFilename);
