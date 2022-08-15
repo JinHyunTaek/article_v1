@@ -3,10 +3,13 @@ package com.example.article.api.controller;
 import com.example.article.api.ApiResult;
 import com.example.article.api.dto.article.CreateArticleDto.CreateArticleRequest;
 import com.example.article.api.dto.article.CreateArticleDto.CreateArticleResponse;
-import com.example.article.api.dto.article.GetArticleDto;
+import com.example.article.api.dto.article.ApiArticleDto;
 import com.example.article.api.dto.article.UpdateArticleDto.UpdateArticleRequest;
 import com.example.article.api.dto.article.UpdateArticleDto.UpdateArticleResponse;
 import com.example.article.api.service.ArticleApiService;
+import com.example.article.condition.article.ArticleSearchCondition;
+import com.example.article.domain.constant.ArticleCategory;
+import com.example.article.web.dto.SimpleArticleDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,30 +30,39 @@ public class ArticleApiController {
     private final ArticleApiService articleService;
 
     @GetMapping("/articles")
-    public ResponseEntity<Page<ApiResult<GetArticleDto>>> getArticles(
-            @PageableDefault(sort = "id",direction = DESC) Pageable pageable
-    ){
-        Page<ApiResult<GetArticleDto>> pagedArticleDtos = articleService.getArticles(pageable);
+    public ResponseEntity<Page<ApiResult<ApiArticleDto>>> getArticles(
+            @PageableDefault(sort = "id",direction = DESC) Pageable pageable,
+            @RequestParam(name = "category", required = false) ArticleCategory articleCategory
+            ){
+        if(articleCategory != null){
+            Page<ApiResult<ApiArticleDto>> byCategories =
+                    articleService.findByCategory(articleCategory, pageable);
+
+            return ResponseEntity
+                    .ok()
+                    .body(byCategories);
+        }
+
+        Page<ApiResult<ApiArticleDto>> dtos = articleService.getArticles(pageable);
 
         return ResponseEntity
                 .ok()
-                .body(pagedArticleDtos);
+                .body(dtos);
     }
 
     @PostMapping("/create")
     public ResponseEntity<ApiResult<CreateArticleResponse>> createArticle(
-            @RequestBody @Valid CreateArticleRequest request
-    ){
-
-        CreateArticleResponse response = articleService.create(request);
+             @Valid CreateArticleRequest request
+            ){
+        CreateArticleResponse response = articleService.create(request,request.getMultipartFiles());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ApiResult<>(response));
     }
 
     @GetMapping("/detail/{articleId}")
-    public ResponseEntity<ApiResult<GetArticleDto>> detail(@PathVariable Long articleId){
-        ApiResult<GetArticleDto> articleDto = articleService.detail(articleId);
+    public ResponseEntity<ApiResult<ApiArticleDto>> detail(@PathVariable Long articleId){
+        ApiResult<ApiArticleDto> articleDto = articleService.detail(articleId);
         return ResponseEntity
                 .ok()
                 .body(articleDto);
@@ -65,6 +77,24 @@ public class ArticleApiController {
                 articleService.update(articleId,request);
 
         return ResponseEntity.ok().body(updateResponse);
+    }
+
+    @PostMapping("/delete/{articleId}")
+    public ResponseEntity<ApiResult<String>> delete(
+            @PathVariable Long articleId
+    ){
+        articleService.delete(articleId);
+        return ResponseEntity.ok().body(new ApiResult<>("removed"));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<SimpleArticleDto>> search(
+            ArticleSearchCondition condition,
+            @PageableDefault(sort = "id",direction = DESC) Pageable pageable
+    ){
+        Page<SimpleArticleDto> response = articleService.findBySearch(condition, pageable);
+        return ResponseEntity.ok()
+                .body(response);
     }
 
 }

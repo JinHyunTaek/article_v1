@@ -5,11 +5,13 @@ import com.example.article.domain.Article;
 import com.example.article.domain.constant.ArticleCategory;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class CreateArticleDto {
 
@@ -33,6 +35,8 @@ public class CreateArticleDto {
 
         @NotNull
         private ArticleCategory articleCategory;
+
+        private List<MultipartFile> multipartFiles;
     }
 
     @Getter

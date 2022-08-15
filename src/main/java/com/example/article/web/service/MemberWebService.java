@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.article.api.error.BasicErrorCode.NO_MEMBER_CONFIGURED;
+import static com.example.article.api.error.BasicErrorCode.MEMBER_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -68,7 +68,7 @@ public class MemberWebService {
 
     public IdAndNickname findIdAndNicknameById(Long memberId) {
         IdAndNickname memberCustom = memberRepository.findIdNicknameById(memberId).orElseThrow(
-                () -> new BasicException(NO_MEMBER_CONFIGURED)
+                () -> new BasicException(MEMBER_NOT_FOUND)
         );
         return memberCustom;
     }

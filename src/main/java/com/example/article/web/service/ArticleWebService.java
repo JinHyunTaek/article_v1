@@ -80,7 +80,7 @@ public class ArticleWebService {
 
     public void setCreateArticleForm(Long memberId, CreateForm form) {
         Member member = memberRepository.findById(memberId).orElseThrow(
-                () -> new BasicException(NO_MEMBER_CONFIGURED)
+                () -> new BasicException(MEMBER_NOT_FOUND)
         );
         MemberLevel memberLevel = member.getMemberLevel();
 
@@ -92,14 +92,14 @@ public class ArticleWebService {
     @Transactional
     public void saveReply(ReplyForm replyForm, Long memberId, Long articleId, Long parentId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED));
+                .orElseThrow(() -> new BasicException(MEMBER_NOT_FOUND));
 
         Article article = articleRepository.findWithMemberById(articleId)
-                .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
+                .orElseThrow(() -> new BasicException(ARTICLE_NOT_FOUND));
 
         if (parentId != null) {
             Reply parent = replyRepository.findById(parentId).orElseThrow(
-                    () -> new BasicException(NO_REPLY_CONFIGURED));
+                    () -> new BasicException(REPLY_NOT_FOUND));
             Reply reply = replyForm.toEntityByParentReply(article, member, parent);
             replyRepository.save(reply);
         } else {
@@ -112,7 +112,7 @@ public class ArticleWebService {
                                               Long parentId,Pageable pageable) {
 
         Article article = articleRepository.findWithMemberById(articleId)
-                .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
+                .orElseThrow(() -> new BasicException(ARTICLE_NOT_FOUND));
 
         Page<Reply> pagedReplies = replyRepository.findByArticleId(articleId, pageable);
 
@@ -140,7 +140,7 @@ public class ArticleWebService {
 
     public UpdateForm setUpdateForm(Long articleId) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
+                .orElseThrow(() -> new BasicException(ARTICLE_NOT_FOUND));
         List<File> files = fileRepository.findByArticleId(articleId);
         UpdateForm form = toForm(article,files);
         return form;
@@ -149,7 +149,7 @@ public class ArticleWebService {
     @Transactional
     public void update(Long articleId, UpdateForm updateForm,List<String> storedFilenames) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
+                .orElseThrow(() -> new BasicException(ARTICLE_NOT_FOUND));
         article.update(updateForm.getTitle(), updateForm.getBody());
         if(updateForm.getNewImages()!=null){
             System.out.println("updateForm = " + updateForm.getNewImages());
@@ -186,11 +186,11 @@ public class ArticleWebService {
     @Transactional
     public void saveLikes(Long articleId, Long memberId) {
         Article article = articleRepository.findById(articleId).orElseThrow(
-                () -> new BasicException(NO_ARTICLE_CONFIGURED)
+                () -> new BasicException(ARTICLE_NOT_FOUND)
         );
 
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED));
+                .orElseThrow(() -> new BasicException(MEMBER_NOT_FOUND));
 
         likeRepository.findByMemberIdAndArticleId(memberId, articleId)
                 .ifPresentOrElse(
@@ -218,7 +218,7 @@ public class ArticleWebService {
     @Transactional
     public void save(Long memberId,CreateForm form) {
         form.setMember(memberRepository.findById(memberId)
-                .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED)));
+                .orElseThrow(() -> new BasicException(MEMBER_NOT_FOUND)));
         Article article = form.toEntity();
         articleRepository.save(article);
         saveFiles(form.getImageFiles(),article);

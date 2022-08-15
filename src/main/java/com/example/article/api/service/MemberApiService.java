@@ -52,7 +52,7 @@ public class MemberApiService {
 
     public ApiResult<GetMemberDto> detail(Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED));
+                .orElseThrow(() -> new BasicException(MEMBER_NOT_FOUND));
         ApiResult<GetMemberDto> memberDto = GetMemberDto.toDtoWithArAndRep(member);
         return memberDto;
     }
@@ -81,7 +81,7 @@ public class MemberApiService {
     @Transactional
     public ApiResult<UpdateMemberResponse> update(Long memberId, UpdateMemberDto.UpdateMemberRequest request) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED));
+                .orElseThrow(() -> new BasicException(MEMBER_NOT_FOUND));
         member.update(request.getLoginId(), request.getPassword(), request.getNickname());
         ApiResult<UpdateMemberResponse> response = UpdateMemberResponse.toDto(member);
         return response;

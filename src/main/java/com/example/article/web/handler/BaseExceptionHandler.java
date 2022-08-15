@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
-@ControllerAdvice
+@ControllerAdvice("com.example.article.web")
 @Slf4j
 public class BaseExceptionHandler {
 

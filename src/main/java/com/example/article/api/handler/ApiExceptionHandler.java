@@ -20,7 +20,7 @@ import java.util.List;
 
 import static com.example.article.api.error.BasicErrorCode.SIZE_NOT_MATCHED;
 
-@RestControllerAdvice("com.example.article.api")
+@RestControllerAdvice
 @Slf4j
 public class ApiExceptionHandler {
 
@@ -77,7 +77,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResult<SimpleErrorResponse>> noReadableMessageHandle
             (HttpMessageNotReadableException e,HttpServletRequest request){
-        log.error("error message: {}, url:{}",e.getMessage(),request.getRequestURI());
+        log.info("error message: {}, url:{}",e.getMessage(),request.getRequestURI(),e);
         SimpleErrorResponse response = SimpleErrorResponse.builder()
                 .url(request.getRequestURI())
                 .message(e.getMessage())
@@ -90,7 +90,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResult<SimpleErrorResponse>>  handleServerException(
             Exception e, HttpServletRequest request){
-        log.error("exception.class, error message: {}, url: {}",e.getMessage(),request.getRequestURI());
+        log.error("exception.class, error message: {}, url: {}",e.getMessage(),request.getRequestURI(),e);
         SimpleErrorResponse errorResponse = SimpleErrorResponse.builder()
                 .url(request.getRequestURI())
                 .message(e.getMessage())

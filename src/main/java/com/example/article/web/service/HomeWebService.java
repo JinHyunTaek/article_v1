@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.article.api.error.BasicErrorCode.NO_MEMBER_CONFIGURED;
+import static com.example.article.api.error.BasicErrorCode.MEMBER_NOT_FOUND;
 import static com.example.article.condition.article.ArticleSearchCondition.ArticleSearchConditionValue;
 
 @Service
@@ -45,7 +45,7 @@ public class HomeWebService {
 
     public Member findById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new BasicException(NO_MEMBER_CONFIGURED));
+                .orElseThrow(() -> new BasicException(MEMBER_NOT_FOUND));
     }
 
     private List<ArticleCategory> getHomeCategories() {

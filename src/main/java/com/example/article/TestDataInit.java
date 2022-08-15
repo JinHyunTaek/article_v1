@@ -18,7 +18,7 @@ import java.util.List;
 
 @Profile("local")
 @RequiredArgsConstructor
-@Component
+//@Component
 public class TestDataInit {
 
     private final MemberRepository memberRepository;

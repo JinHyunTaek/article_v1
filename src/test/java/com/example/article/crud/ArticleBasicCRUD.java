@@ -17,7 +17,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.article.api.error.BasicErrorCode.NO_ARTICLE_CONFIGURED;
+import static com.example.article.api.error.BasicErrorCode.ARTICLE_NOT_FOUND;
 import static com.example.article.domain.constant.ArticleCategory.FREE;
 import static com.example.article.domain.constant.MemberLevel.NEW;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -84,7 +84,7 @@ public class ArticleBasicCRUD {
                 .ifPresentOrElse(
                         article -> article.update("updated title1","updated body1"),
                         () -> {
-                            throw new BasicException(NO_ARTICLE_CONFIGURED);
+                            throw new BasicException(ARTICLE_NOT_FOUND);
                         }
                 );
 
@@ -93,7 +93,7 @@ public class ArticleBasicCRUD {
 
         //then
         Article updateArticle = articleRepository.findByTitle("updated title1")
-                .orElseThrow(() -> new BasicException(NO_ARTICLE_CONFIGURED));
+                .orElseThrow(() -> new BasicException(ARTICLE_NOT_FOUND));
         assertThat(updateArticle.getBody()).isEqualTo("updated body1");
         assertThat(updateArticle.getArticleCategory()).isEqualTo(FREE);
     }

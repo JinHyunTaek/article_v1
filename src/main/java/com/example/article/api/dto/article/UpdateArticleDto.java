@@ -16,9 +16,6 @@ public class UpdateArticleDto {
     @NoArgsConstructor
     public static class UpdateArticleRequest {
 
-        @NotNull
-        private Long id;
-
         @NotBlank
         @Size(min = 2, max = 30)
         private String title;
