@@ -12,7 +12,11 @@ import java.util.List;
 public class BasicErrorResponse {
 
     private List<String> errorFields;
+
+    private String errorField;
+
     private String errorCode;
+
     private String errorMessage;
 
     public void addErrorField(String errorField){

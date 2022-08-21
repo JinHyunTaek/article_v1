@@ -17,6 +17,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.article.api.error.BasicErrorCode.SIZE_NOT_MATCHED;
 
@@ -24,15 +25,16 @@ import static com.example.article.api.error.BasicErrorCode.SIZE_NOT_MATCHED;
 @Slf4j
 public class ApiExceptionHandler {
 
-    @ExceptionHandler({BasicException.class})
+    @ExceptionHandler(BasicException.class)
     public ResponseEntity<ApiResult<BasicErrorResponse>> handleMemberException(BasicException e, HttpServletRequest request){
         log.info("error code: {}, message: {}, url: {}",
                 e.getErrorCode(),e.getErrorMessage(),request.getRequestURI());
         BasicErrorResponse response = BasicErrorResponse.builder()
                 .errorCode(e.getErrorCode().toString())
-                .errorFields(List.of(e.getErrorField()))
                 .errorMessage(e.getErrorMessage())
+                .errorField(e.getErrorField())
                 .build();
+
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ApiResult<>(response));

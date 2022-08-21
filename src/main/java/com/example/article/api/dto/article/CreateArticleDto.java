@@ -1,6 +1,7 @@
 package com.example.article.api.dto.article;
 
 
+import com.example.article.api.ApiResult;
 import com.example.article.domain.Article;
 import com.example.article.domain.constant.ArticleCategory;
 import com.fasterxml.jackson.annotation.JsonFormat;
